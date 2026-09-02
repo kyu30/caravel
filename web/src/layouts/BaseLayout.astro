@@ -1,0 +1,78 @@
+---
+import '../styles/global.css'
+import Masthead from '../components/Masthead.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import {SITE} from '../lib/site.js'
+import {getNav} from '../lib/nav'
+
+interface Props {
+  title?: string
+  description?: string
+  /** Path used for the canonical URL, e.g. Astro.url.pathname */
+  pathname?: string
+  image?: string | null
+  /** Hide the big masthead (used on article pages for a tighter header) */
+  compactHeader?: boolean
+}
+
+const {
+  title,
+  description = SITE.tagline,
+  pathname = Astro.url.pathname,
+  image = null,
+  compactHeader = false,
+} = Astro.props
+
+const pageTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`
+const canonical = new URL(pathname, SITE.url).href
+const nav = await getNav()
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title ?? SITE.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    {image && <meta property="og:image" content={new URL(image, SITE.url).href} />}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+
+    <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <header class="site-header">
+      <Masthead compact={compactHeader} />
+      <Nav groups={nav} />
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer groups={nav} />
+
+    <style>
+      .site-header {
+        border-bottom: 3px double var(--rule-strong);
+      }
+    </style>
+  </body>
+</html>

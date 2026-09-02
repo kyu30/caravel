@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import HeroStory from '../components/HeroStory.astro'
+import ArticleCard from '../components/ArticleCard.astro'
+import SectionRow from '../components/SectionRow.astro'
+import RegionalMap from '../components/RegionalMap.astro'
+import {
+  getFeaturedArticles,
+  getLatestArticles,
+  getRegions,
+  getArticlesByTaxonomy,
+  getSections,
+} from '../lib/queries'
+
+const [featured, latest, regions, compass] = await Promise.all([
+  getFeaturedArticles(5),
+  getLatestArticles(14),
+  getRegions(),
+  getSections('compass'),
+])
+
+const lead = featured[0] ?? latest[0]
+const subFeatured = (featured[0] ? featured.slice(1, 4) : latest.slice(1, 4))
+const usedIds = new Set([lead?._id, ...subFeatured.map((a) => a._id)])
+const latestFeed = latest.filter((a) => !usedIds.has(a._id)).slice(0, 8)
+
+// One row per region (top 4 by nav order).
+const regionRows = await Promise.all(
+  regions.slice(0, 4).map(async (r) => ({
+    region: r,
+    articles: await getArticlesByTaxonomy(r, 4),
+  })),
+)
+
+const compassIds = compass.map((c) => c._id)
+const compassArticles = latest.filter((a) =>
+  (a.compassTopics ?? []).some((t) => compassIds.includes(t._id)),
+)
+---
+
+<BaseLayout>
+  <div class="container home">
+    {lead && <HeroStory article={lead} />}
+
+    {
+      subFeatured.length > 0 && (
+        <section class="home__secondary">
+          {subFeatured.map((a) => (
+            <ArticleCard article={a} variant="standard" showExcerpt={false} headingLevel={2} />
+          ))}
+        </section>
+      )
+    }
+
+    <section class="home__latest">
+      <h2 class="section-heading">
+        <span>Latest</span>
+        <a href="/latest">All articles →</a>
+      </h2>
+      <div class="home__latest-grid">
+        {latestFeed.map((a) => (
+          <ArticleCard article={a} variant="compact" showImage={true} />
+        ))}
+      </div>
+    </section>
+
+    {
+      regionRows.map(({region, articles}) => (
+        <SectionRow
+          title={region.name}
+          href={`/${region.slug}`}
+          articles={articles}
+          layout="lead+list"
+          limit={4}
+        />
+      ))
+    }
+
+    <section class="home__compass">
+      <div class="home__compass-head">
+        <p class="kicker">The Caravel Compass</p>
+        <h2>Topic verticals, across every region</h2>
+        <a href="/compass">About Compass →</a>
+      </div>
+      <div class="home__latest-grid">
+        {compassArticles.slice(0, 4).map((a) => (
+          <ArticleCard article={a} variant="compact" />
+        ))}
+      </div>
+    </section>
+
+    <section class="home__map">
+      <h2 class="section-heading"><span>Explore by region</span></h2>
+      <RegionalMap regions={regions} />
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .home {
+    padding-bottom: var(--space-5);
+  }
+  .home__secondary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--rule);
+  }
+  .home__latest {
+    margin-top: var(--space-5);
+  }
+  .home__latest-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+  }
+  .home__compass {
+    margin-block: var(--space-5);
+    padding: var(--space-4);
+    background: var(--accent-ink);
+    color: var(--paper);
+  }
+  .home__compass :global(.card__title a),
+  .home__compass :global(.byline__authors a) {
+    color: var(--paper);
+  }
+  .home__compass :global(.byline),
+  .home__compass :global(.byline time) {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .home__compass-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: var(--space-3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding-bottom: var(--space-2);
+  }
+  .home__compass-head .kicker {
+    color: #e7b96b;
+    flex-basis: 100%;
+  }
+  .home__compass-head h2 {
+    margin: 0;
+    font-size: var(--step-2);
+  }
+  .home__compass-head a {
+    color: var(--paper);
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .home__map {
+    margin-block: var(--space-5);
+  }
+
+  @media (max-width: 900px) {
+    .home__secondary,
+    .home__latest-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
+    .home__secondary,
+    .home__latest-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

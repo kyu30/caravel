@@ -1,0 +1,77 @@
+---
+import type {ArticleCardData} from '../lib/types'
+import ArticleCard from './ArticleCard.astro'
+
+interface Props {
+  title: string
+  href?: string
+  articles: ArticleCardData[]
+  /** 'grid' = cards across; 'lead+list' = one lead card + a stacked list */
+  layout?: 'grid' | 'lead+list'
+  limit?: number
+}
+
+const {title, href, articles, layout = 'grid', limit = 4} = Astro.props
+const items = articles.slice(0, limit)
+const [lead, ...rest] = items
+---
+
+{
+  items.length > 0 && (
+    <section class="section-row">
+      <h2 class="section-heading">
+        <span>{title}</span>
+        {href && <a href={href}>More {title} →</a>}
+      </h2>
+
+      {layout === 'grid' ? (
+        <div class="section-row__grid">
+          {items.map((a) => (
+            <ArticleCard article={a} variant="standard" showExcerpt={false} />
+          ))}
+        </div>
+      ) : (
+        <div class="section-row__split">
+          <ArticleCard article={lead} variant="standard" />
+          <div class="section-row__list">
+            {rest.map((a) => (
+              <ArticleCard article={a} variant="row" />
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  )
+}
+
+<style>
+  .section-row {
+    margin-block: var(--space-5);
+  }
+  .section-row__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+  }
+  .section-row__split {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-4);
+  }
+  .section-row__list .card--row:last-child {
+    border-bottom: 0;
+  }
+  @media (max-width: 900px) {
+    .section-row__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .section-row__split {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .section-row__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

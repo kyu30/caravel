@@ -1,0 +1,100 @@
+---
+import {imageUrl} from '../lib/image'
+import type {Author} from '../lib/types'
+
+interface Props {
+  people: Author[]
+  showBio?: boolean
+}
+const {people, showBio = false} = Astro.props
+---
+
+<ul class:list={['staff', {'staff--bio': showBio}]}>
+  {
+    people.map((p) => (
+      <li class="staff__item">
+        <a href={`/authors/${p.slug}`} class="staff__photo-link" aria-hidden="true" tabindex="-1">
+          {p.headshot ? (
+            <img src={imageUrl(p.headshot, {width: 240, height: 240})} alt="" width="110" height="110" />
+          ) : (
+            <span class="staff__avatar">{p.name.charAt(0)}</span>
+          )}
+        </a>
+        <div class="staff__text">
+          <p class="staff__name">
+            <a href={`/authors/${p.slug}`}>{p.name}</a>
+          </p>
+          {p.role && <p class="staff__role">{p.role}</p>}
+          {showBio && p.bio && p.bio[0]?.children?.[0]?.text && (
+            <p class="staff__bio">{p.bio[0].children[0].text}</p>
+          )}
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .staff {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--space-4) var(--space-3);
+  }
+  .staff--bio {
+    grid-template-columns: 1fr;
+    max-width: 44rem;
+  }
+  .staff__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  .staff--bio .staff__item {
+    flex-direction: row;
+    align-items: start;
+    text-align: left;
+    gap: var(--space-2);
+    border-top: 1px solid var(--rule);
+    padding-top: var(--space-3);
+  }
+  .staff__photo-link img,
+  .staff__avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--paper-sunk);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    color: var(--ink-faint);
+  }
+  .staff__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-1);
+    margin: 0;
+  }
+  .staff__name a {
+    color: var(--ink);
+  }
+  .staff__role {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--flag);
+    margin: 0.2rem 0 0;
+  }
+  .staff__bio {
+    color: var(--ink-soft);
+    font-size: var(--step-0);
+    margin: 0.4rem 0 0;
+  }
+</style>

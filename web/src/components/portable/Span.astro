@@ -1,0 +1,37 @@
+---
+import type {PortableBlock} from '../../lib/types'
+
+interface Props {
+  text: string
+  marks?: string[]
+  markDefs?: NonNullable<PortableBlock['markDefs']>
+}
+const {text, marks = [], markDefs = []} = Astro.props
+
+const [mark, ...rest] = marks
+const def = mark ? markDefs.find((d) => d._key === mark) : undefined
+
+let kind: 'text' | 'strong' | 'em' | 'underline' | 'link' | 'passthrough' = 'text'
+if (mark === 'strong') kind = 'strong'
+else if (mark === 'em') kind = 'em'
+else if (mark === 'underline') kind = 'underline'
+else if (def && def._type === 'link') kind = 'link'
+else if (mark) kind = 'passthrough'
+---
+
+{kind === 'text' && text}
+{kind === 'strong' && (
+  <strong><Astro.self text={text} marks={rest} markDefs={markDefs} /></strong>
+)}
+{kind === 'em' && <em><Astro.self text={text} marks={rest} markDefs={markDefs} /></em>}
+{kind === 'underline' && <u><Astro.self text={text} marks={rest} markDefs={markDefs} /></u>}
+{kind === 'link' && (
+  <a
+    href={def?.href}
+    target={def?.blank ? '_blank' : undefined}
+    rel={def?.blank ? 'noopener noreferrer' : undefined}
+  >
+    <Astro.self text={text} marks={rest} markDefs={markDefs} />
+  </a>
+)}
+{kind === 'passthrough' && <Astro.self text={text} marks={rest} markDefs={markDefs} />}

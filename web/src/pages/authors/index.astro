@@ -1,0 +1,110 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro'
+import {imageUrl} from '../../lib/image'
+import {getAuthors} from '../../lib/queries'
+
+const authors = await getAuthors()
+const active = authors.filter((a) => a.active !== false)
+const former = authors.filter((a) => a.active === false)
+---
+
+<PageLayout
+  title="Contributors"
+  kicker="Masthead"
+  intro="Everyone who has written for The Caravel. Editors and staff are also listed on the Staff and Editorial Board pages."
+  wide
+>
+  <section>
+    <h2 class="section-heading"><span>Current contributors</span></h2>
+    <ul class="authors">
+      {
+        active.map((a) => (
+          <li class="authors__item">
+            <a href={`/authors/${a.slug}`} class="authors__link">
+              {a.headshot ? (
+                <img src={imageUrl(a.headshot, {width: 200, height: 200})} alt="" width="88" height="88" />
+              ) : (
+                <span class="authors__avatar" aria-hidden="true">
+                  {a.name.charAt(0)}
+                </span>
+              )}
+              <span class="authors__name">{a.name}</span>
+              {a.role && <span class="authors__role">{a.role}</span>}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    former.length > 0 && (
+      <section class="authors__former">
+        <h2 class="section-heading"><span>Former staff &amp; alumni</span></h2>
+        <ul class="authors authors--dim">
+          {former.map((a) => (
+            <li class="authors__item">
+              <a href={`/authors/${a.slug}`} class="authors__link">
+                <span class="authors__name">{a.name}</span>
+                {a.role && <span class="authors__role">{a.role}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</PageLayout>
+
+<style>
+  .authors {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--space-3);
+  }
+  .authors__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.35rem;
+    color: var(--ink);
+  }
+  .authors__link:hover {
+    text-decoration: none;
+    color: var(--accent);
+  }
+  .authors__link img,
+  .authors__avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--paper-sunk);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    color: var(--ink-faint);
+  }
+  .authors__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  .authors__role {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+  }
+  .authors--dim .authors__link {
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+  .authors__former {
+    margin-top: var(--space-5);
+  }
+</style>

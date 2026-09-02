@@ -1,0 +1,64 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+
+// TODO: This list is a placeholder. Options for the real data:
+//   1. Hard-code it here (simplest — it changes once a year).
+//   2. Add a lightweight `award` document type in Sanity later.
+// Confirm which you want; for now it's inline.
+const winners: {year: number; name: string; note?: string}[] = [
+  {year: 2024, name: 'Placeholder Name', note: 'For distinguished reporting on —'},
+  {year: 2023, name: 'Placeholder Name'},
+  {year: 2022, name: 'Placeholder Name'},
+]
+---
+
+<PageLayout
+  title="Bunn Award Winners"
+  kicker="Recognition"
+  intro="The Edwin M. Bunn Award recognizes exceptional contributions to The Caravel. Past recipients:"
+>
+  <dl class="bunn">
+    {
+      winners.map((w) => (
+        <div class="bunn__row">
+          <dt>{w.year}</dt>
+          <dd>
+            <strong>{w.name}</strong>
+            {w.note && <span class="bunn__note"> — {w.note}</span>}
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+  <p class="bunn__todo">
+    <em>Placeholder list — send the full roster of recipients and citations to replace this.</em>
+  </p>
+
+  <style>
+    .bunn {
+      margin: 0;
+    }
+    .bunn__row {
+      display: grid;
+      grid-template-columns: 5rem 1fr;
+      gap: 1rem;
+      padding-block: 0.9rem;
+      border-top: 1px solid var(--rule);
+    }
+    .bunn dt {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      color: var(--ink-faint);
+    }
+    .bunn dd {
+      margin: 0;
+    }
+    .bunn__note {
+      color: var(--ink-soft);
+    }
+    .bunn__todo {
+      margin-top: var(--space-3);
+      color: var(--ink-faint);
+    }
+  </style>
+</PageLayout>

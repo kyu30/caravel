@@ -1,0 +1,81 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro'
+import RegionalMap from '../../components/RegionalMap.astro'
+import {getRegions, getArticlesByTaxonomy} from '../../lib/queries'
+
+const regions = await getRegions()
+const withCounts = await Promise.all(
+  regions.map(async (r) => ({
+    region: r,
+    latest: (await getArticlesByTaxonomy(r, 1))[0] ?? null,
+  })),
+)
+---
+
+<PageLayout
+  title="Regions"
+  kicker="Coverage"
+  intro="The Caravel organizes its reporting into six world regions. Choose one on the map, or from the list below."
+  wide
+>
+  <RegionalMap regions={regions} />
+
+  <ul class="regionlist">
+    {
+      withCounts.map(({region, latest}) => (
+        <li class="regionlist__item">
+          <a href={`/${region.slug}`} class="regionlist__name">
+            {region.name}
+          </a>
+          {region.description && <p class="regionlist__desc">{region.description}</p>}
+          {latest && (
+            <p class="regionlist__latest">
+              Latest: <a href={latest.url}>{latest.title}</a>
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</PageLayout>
+
+<style>
+  .regionlist {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-5) 0 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4) var(--space-4);
+  }
+  .regionlist__item {
+    border-top: 3px solid var(--rule-strong);
+    padding-top: var(--space-2);
+  }
+  .regionlist__name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--step-2);
+    color: var(--ink);
+    display: block;
+  }
+  .regionlist__name:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .regionlist__desc {
+    color: var(--ink-soft);
+    margin: 0.4rem 0 0.6rem;
+  }
+  .regionlist__latest {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    margin: 0;
+  }
+  @media (max-width: 640px) {
+    .regionlist {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,33 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# builds
+dist/
+web/dist/
+studio/dist/
+.astro/
+.vercel/
+.output/
+
+# env
+.env
+.env.*
+!.env.example
+
+# sanity
+studio/.sanity/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp

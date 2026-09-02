@@ -1,0 +1,94 @@
+---
+import type {Taxonomy} from '../lib/types'
+
+interface Props {
+  regions: Taxonomy[]
+}
+const {regions} = Astro.props
+
+/**
+ * PLACEHOLDER interactive map.
+ *
+ * This is a schematic, NOT a geographic map — six clickable zones that route to
+ * the region pages so the layout and data wiring can be reviewed now.
+ *
+ * To make it a real world map, install a lightweight geo library — my
+ * recommendation is `react-simple-maps` (+ `@astrojs/react` + `d3-geo`), or the
+ * dependency-free `svg-world-map`. FLAGGED for your approval before install; see
+ * /docs/DEPENDENCIES.md. Once approved, replace this component with an island
+ * (`client:visible`) that renders the topojson and maps each geography's id to a
+ * region `mapId`.
+ */
+
+// Rough on-screen boxes keyed by region mapId. Order matches a world layout.
+const layout: Record<string, {x: number; y: number; w: number; h: number}> = {
+  wec: {x: 2, y: 4, w: 30, h: 30}, // Western Europe & Canada (upper-left)
+  eeca: {x: 34, y: 4, w: 34, h: 26}, // Eastern Europe & Central Asia (upper-mid)
+  iap: {x: 70, y: 8, w: 28, h: 42}, // Indo-Asia-Pacific (right)
+  swana: {x: 34, y: 32, w: 24, h: 20}, // SWANA (center)
+  africa: {x: 30, y: 54, w: 26, h: 40}, // Africa (lower-mid)
+  lac: {x: 2, y: 40, w: 26, h: 54}, // Latin America & Caribbean (lower-left)
+}
+---
+
+<figure class="rmap">
+  <svg viewBox="0 0 100 98" role="group" aria-label="The Caravel regions" class="rmap__svg">
+    {
+      regions.map((r) => {
+        const box = r.mapId ? layout[r.mapId] : undefined
+        if (!box) return null
+        return (
+          <a href={`/${r.slug}`} class="rmap__zone" aria-label={r.name}>
+            <rect x={box.x} y={box.y} width={box.w} height={box.h} rx="1.5" />
+            <text x={box.x + box.w / 2} y={box.y + box.h / 2} text-anchor="middle" dominant-baseline="middle">
+              {r.shortName ?? r.name}
+            </text>
+          </a>
+        )
+      })
+    }
+  </svg>
+  <figcaption>Choose a region — or browse the <a href="/regions">full list</a>.</figcaption>
+</figure>
+
+<style>
+  .rmap {
+    margin: 0;
+  }
+  .rmap__svg {
+    width: 100%;
+    height: auto;
+    background: var(--paper-sunk);
+    border: 1px solid var(--rule);
+  }
+  .rmap__zone rect {
+    fill: var(--accent);
+    opacity: 0.14;
+    stroke: var(--accent);
+    stroke-width: 0.4;
+    transition: opacity 0.15s ease;
+  }
+  .rmap__zone text {
+    fill: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 2.4px;
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .rmap__zone:hover rect,
+  .rmap__zone:focus rect {
+    opacity: 0.32;
+  }
+  .rmap__zone:focus {
+    outline: none;
+  }
+  .rmap__zone:focus rect {
+    stroke-width: 0.9;
+  }
+  figcaption {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    margin-top: 0.6rem;
+  }
+</style>

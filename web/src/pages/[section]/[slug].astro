@@ -1,0 +1,203 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Byline from '../../components/Byline.astro'
+import ArticleCard from '../../components/ArticleCard.astro'
+import PortableText from '../../components/portable/PortableText.astro'
+import {imageUrl, imageAlt} from '../../lib/image'
+import {
+  getAllArticleRoutes,
+  getArticleBySlug,
+  getRelatedArticles,
+} from '../../lib/queries'
+import {SITE} from '../../lib/site.js'
+
+export async function getStaticPaths() {
+  const routes = await getAllArticleRoutes()
+  return routes.map((r) => ({params: {section: r.section, slug: r.slug}}))
+}
+
+const {section, slug} = Astro.params as {section: string; slug: string}
+const article = await getArticleBySlug(section, slug)
+
+if (!article) {
+  return new Response(null, {status: 404})
+}
+
+const related = await getRelatedArticles(article, 4)
+const hero = imageUrl(article.heroImage, {width: 1600})
+const heroCredit =
+  article.heroImage && typeof article.heroImage !== 'string' ? article.heroImage.credit : undefined
+const heroCaption =
+  article.heroImage && typeof article.heroImage !== 'string' ? article.heroImage.caption : undefined
+
+const tags = [
+  ...(article.regions ?? []).map((r) => ({label: r.name, href: `/${r.slug}`})),
+  ...(article.compassTopics ?? []).map((c) => ({label: `Compass: ${c.name}`, href: `/${c.slug}`})),
+]
+---
+
+<BaseLayout
+  title={article.title}
+  description={article.excerpt ?? article.subtitle}
+  image={hero}
+  compactHeader
+>
+  <article class="article">
+    <div class="container article__head">
+      <p class="kicker">
+        <a href={`/${article.primarySection.slug}`}>{article.primarySection.name}</a>
+      </p>
+      <h1 class="article__title">{article.title}</h1>
+      {article.subtitle && <p class="article__deck">{article.subtitle}</p>}
+      <Byline authors={article.authors} date={article.publishDate} showRole class="article__byline" />
+    </div>
+
+    {
+      hero && (
+        <figure class="article__hero">
+          <img src={hero} alt={imageAlt(article.heroImage, article.title)} />
+          {(heroCaption || heroCredit) && (
+            <figcaption class="container">
+              {heroCaption}
+              {heroCredit && <span class="article__credit"> — {heroCredit}</span>}
+            </figcaption>
+          )}
+        </figure>
+      )
+    }
+
+    <div class="container article__body prose">
+      <PortableText value={article.body} />
+
+      {
+        tags.length > 0 && (
+          <p class="article__tags">
+            {tags.map((t) => (
+              <a href={t.href} class="article__tag">
+                {t.label}
+              </a>
+            ))}
+          </p>
+        )
+      }
+
+      <p class="article__share">
+        <a
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(new URL(article.url, SITE.url).href)}`}
+          target="_blank"
+          rel="noopener"
+        >
+          Share on X
+        </a>
+        <a href="/latest">← Back to Latest</a>
+      </p>
+    </div>
+
+    {
+      related.length > 0 && (
+        <aside class="container article__related">
+          <h2 class="section-heading"><span>Related</span></h2>
+          <div class="article__related-grid">
+            {related.map((a) => (
+              <ArticleCard article={a} variant="compact" />
+            ))}
+          </div>
+        </aside>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .article {
+    padding-block: var(--space-4) var(--space-6);
+  }
+  .article__head {
+    max-width: 46rem;
+    margin-inline: auto;
+    text-align: center;
+    padding-bottom: var(--space-3);
+  }
+  .article__title {
+    font-size: var(--step-4);
+    margin: 0.3rem 0 0.4rem;
+  }
+  .article__deck {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    color: var(--ink-soft);
+    margin: 0 0 1rem;
+  }
+  .article__byline {
+    justify-content: center;
+  }
+  .article__hero {
+    margin: var(--space-3) 0 var(--space-4);
+  }
+  .article__hero img {
+    width: 100%;
+    max-height: 68vh;
+    object-fit: cover;
+    background: var(--paper-sunk);
+  }
+  .article__hero figcaption {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    margin-top: 0.5rem;
+  }
+  .article__credit {
+    font-style: italic;
+  }
+  .article__body {
+    margin-inline: auto;
+  }
+  .article__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: var(--space-4);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--rule);
+  }
+  .article__tag {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--rule-strong);
+    padding: 0.3rem 0.6rem;
+    color: var(--ink);
+  }
+  .article__tag:hover {
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+  }
+  .article__share {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    margin-top: var(--space-3);
+  }
+  .article__related {
+    margin-top: var(--space-6);
+  }
+  .article__related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+  }
+  @media (max-width: 900px) {
+    .article__related-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
+    .article__related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

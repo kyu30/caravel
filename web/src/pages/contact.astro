@@ -1,0 +1,70 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import {SITE} from '../lib/site.js'
+---
+
+<PageLayout
+  title="Contact"
+  kicker="Get in touch"
+  intro="How to reach The Caravel — for pitches, corrections, letters, and general questions."
+>
+  <!-- TODO: fill in real email addresses / handles. -->
+  <dl class="contact">
+    <div>
+      <dt>Pitch a story</dt>
+      <dd>Use the <a href={SITE.submissionFormUrl}>submission form</a>. See <a href="/join">Join Our Team</a>.</dd>
+    </div>
+    <div>
+      <dt>Editors</dt>
+      <dd><a href="mailto:editor@thecaravelgu.com">editor@thecaravelgu.com</a></dd>
+    </div>
+    <div>
+      <dt>Corrections</dt>
+      <dd>
+        <a href="mailto:corrections@thecaravelgu.com">corrections@thecaravelgu.com</a> — please
+        include the article URL and the specific error.
+      </dd>
+    </div>
+    <div>
+      <dt>Letters to the editor</dt>
+      <dd><a href="mailto:letters@thecaravelgu.com">letters@thecaravelgu.com</a></dd>
+    </div>
+    <div>
+      <dt>Social</dt>
+      <dd>
+        <a href={SITE.social.instagram}>Instagram</a> ·
+        <a href={SITE.social.twitter}>X</a>
+      </dd>
+    </div>
+  </dl>
+
+  <style>
+    .contact {
+      margin: 0;
+    }
+    .contact > div {
+      display: grid;
+      grid-template-columns: 12rem 1fr;
+      gap: 1rem;
+      padding-block: 0.9rem;
+      border-top: 1px solid var(--rule);
+    }
+    .contact dt {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: var(--step--1);
+      color: var(--ink-faint);
+    }
+    .contact dd {
+      margin: 0;
+    }
+    @media (max-width: 560px) {
+      .contact > div {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+      }
+    }
+  </style>
+</PageLayout>

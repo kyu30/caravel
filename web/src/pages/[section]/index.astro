@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import ArticleCard from '../../components/ArticleCard.astro'
+import {getAllTaxonomies, getArticlesByTaxonomy} from '../../lib/queries'
+import type {Taxonomy} from '../../lib/types'
+
+export async function getStaticPaths() {
+  const taxonomies = await getAllTaxonomies()
+  return taxonomies.map((t) => ({
+    params: {section: t.slug},
+    props: {taxonomy: t},
+  }))
+}
+
+interface Props {
+  taxonomy: Taxonomy
+}
+const {taxonomy} = Astro.props
+const articles = await getArticlesByTaxonomy(taxonomy, 60)
+
+const isRegion = taxonomy._type === 'region'
+const isCompass = taxonomy._type === 'section' && taxonomy.kind === 'compass'
+const kicker = isRegion ? 'Region' : isCompass ? 'Compass' : 'Section'
+
+const [lead, ...rest] = articles
+---
+
+<BaseLayout title={taxonomy.name} description={taxonomy.description}>
+  <div class="container sec">
+    <header class="sec__head">
+      <p class="kicker">{kicker}</p>
+      <h1 class="sec__title">{taxonomy.name}</h1>
+      {taxonomy.description && <p class="sec__desc">{taxonomy.description}</p>}
+      {isRegion && <p class="sec__aside"><a href="/regions">← All regions &amp; map</a></p>}
+      {isCompass && <p class="sec__aside"><a href="/compass">← About Compass</a></p>}
+    </header>
+
+    {
+      articles.length === 0 ? (
+        <p class="sec__empty">No articles here yet.</p>
+      ) : (
+        <>
+          <div class="sec__lead">
+            <ArticleCard article={lead} variant="lead" headingLevel={2} />
+          </div>
+          <div class="sec__grid">
+            {rest.map((a) => (
+              <ArticleCard article={a} variant="standard" showExcerpt={false} />
+            ))}
+          </div>
+        </>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .sec {
+    padding-block: var(--space-5);
+  }
+  .sec__head {
+    border-bottom: 3px solid var(--rule-strong);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .sec__title {
+    font-size: var(--step-4);
+    margin: 0.2rem 0 0;
+  }
+  .sec__desc {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: var(--space-2) 0 0;
+  }
+  .sec__aside {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    margin: var(--space-2) 0 0;
+  }
+  .sec__lead {
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--rule);
+  }
+  .sec__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4) var(--space-3);
+  }
+  @media (max-width: 900px) {
+    .sec__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
+    .sec__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import ArticleCard from '../../components/ArticleCard.astro'
+import PortableText from '../../components/portable/PortableText.astro'
+import {imageUrl} from '../../lib/image'
+import {getAuthors, getAuthorBySlug, getArticlesByAuthor} from '../../lib/queries'
+
+export async function getStaticPaths() {
+  const authors = await getAuthors()
+  return authors.map((a) => ({params: {slug: a.slug}}))
+}
+
+const {slug} = Astro.params as {slug: string}
+const author = await getAuthorBySlug(slug)
+if (!author) return new Response(null, {status: 404})
+
+const articles = await getArticlesByAuthor(author._id, 60)
+const headshot = imageUrl(author.headshot, {width: 320, height: 320})
+
+const socialLabels: Record<string, string> = {
+  twitter: 'X / Twitter',
+  bluesky: 'Bluesky',
+  instagram: 'Instagram',
+  linkedin: 'LinkedIn',
+  mastodon: 'Mastodon',
+  facebook: 'Facebook',
+  website: 'Website',
+  email: 'Email',
+}
+---
+
+<BaseLayout title={author.name} description={author.role ?? `Articles by ${author.name}`}>
+  <div class="container profile">
+    <header class="profile__head">
+      {
+        headshot ? (
+          <img class="profile__photo" src={headshot} alt={author.name} width="160" height="160" />
+        ) : (
+          <span class="profile__photo profile__photo--placeholder" aria-hidden="true">
+            {author.name.charAt(0)}
+          </span>
+        )
+      }
+      <div>
+        {author.role && <p class="kicker">{author.role}</p>}
+        <h1 class="profile__name">{author.name}</h1>
+        {author.active === false && <p class="profile__former">Former staff</p>}
+        {author.bio && <div class="profile__bio"><PortableText value={author.bio} /></div>}
+        {
+          author.socialLinks && author.socialLinks.length > 0 && (
+            <ul class="profile__social">
+              {author.socialLinks.map((s) => (
+                <li>
+                  <a href={s.url} rel="me noopener" target="_blank">
+                    {socialLabels[s.platform] ?? s.platform}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </header>
+
+    <section class="profile__work">
+      <h2 class="section-heading">
+        <span>{articles.length} {articles.length === 1 ? 'article' : 'articles'}</span>
+      </h2>
+      {
+        articles.length === 0 ? (
+          <p>No published articles yet.</p>
+        ) : (
+          <div class="profile__grid">
+            {articles.map((a) => (
+              <ArticleCard article={a} variant="standard" showExcerpt={false} />
+            ))}
+          </div>
+        )
+      }
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .profile {
+    padding-block: var(--space-5);
+  }
+  .profile__head {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: var(--space-4);
+    align-items: start;
+    border-bottom: 3px solid var(--rule-strong);
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .profile__photo {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--paper-sunk);
+  }
+  .profile__photo--placeholder {
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    color: var(--ink-faint);
+  }
+  .profile__name {
+    font-size: var(--step-3);
+    margin: 0.2rem 0 0.4rem;
+  }
+  .profile__former {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    margin: 0 0 0.6rem;
+  }
+  .profile__bio {
+    max-width: 60ch;
+  }
+  .profile__bio :global(p) {
+    font-size: var(--step-0);
+    margin-bottom: 0.6em;
+  }
+  .profile__social {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0;
+    margin: var(--space-2) 0 0;
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+  }
+  .profile__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4) var(--space-3);
+  }
+  @media (max-width: 720px) {
+    .profile__head {
+      grid-template-columns: 1fr;
+    }
+    .profile__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .profile__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

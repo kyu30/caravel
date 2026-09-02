@@ -1,0 +1,163 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+---
+
+<PageLayout
+  title="Search"
+  kicker="Archive"
+  intro="Search articles by headline, summary, section, or author. Basic text match for now — filters and full-text search come later."
+  wide
+>
+  <form class="search" role="search" id="search-form">
+    <label class="visually-hidden" for="q">Search articles</label>
+    <input
+      type="search"
+      id="q"
+      name="q"
+      placeholder="Search headlines, authors, sections…"
+      autocomplete="off"
+      autofocus
+    />
+    <button type="submit">Search</button>
+  </form>
+
+  <p class="search__status" id="search-status" aria-live="polite">Loading the index…</p>
+  <ul class="search__results" id="search-results"></ul>
+</PageLayout>
+
+<script>
+  interface Rec {
+    title: string
+    url: string
+    excerpt: string
+    section: string
+    date: string
+    authors: string[]
+  }
+
+  const form = document.getElementById('search-form') as HTMLFormElement
+  const input = document.getElementById('q') as HTMLInputElement
+  const status = document.getElementById('search-status') as HTMLElement
+  const results = document.getElementById('search-results') as HTMLElement
+
+  let records: Rec[] = []
+
+  const fmtDate = (iso: string) =>
+    new Date(iso).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})
+
+  function render(query: string) {
+    const q = query.trim().toLowerCase()
+    const params = new URLSearchParams(location.search)
+    if (q) params.set('q', q)
+    else params.delete('q')
+    history.replaceState(null, '', `${location.pathname}${params.toString() ? '?' + params : ''}`)
+
+    if (!q) {
+      results.innerHTML = ''
+      status.textContent = `${records.length} articles indexed. Type to search.`
+      return
+    }
+
+    const terms = q.split(/\s+/)
+    const matches = records.filter((r) => {
+      const hay = `${r.title} ${r.excerpt} ${r.section} ${r.authors.join(' ')}`.toLowerCase()
+      return terms.every((t) => hay.includes(t))
+    })
+
+    status.textContent = `${matches.length} result${matches.length === 1 ? '' : 's'} for “${query.trim()}”`
+    results.innerHTML = matches
+      .map(
+        (r) => `
+        <li class="search__item">
+          <a href="${r.url}"><span class="search__kicker">${r.section}</span>${r.title}</a>
+          <p>${r.excerpt}</p>
+          <p class="search__meta">${r.authors.join(', ')} · ${fmtDate(r.date)}</p>
+        </li>`,
+      )
+      .join('')
+  }
+
+  fetch('/search-index.json')
+    .then((res) => res.json())
+    .then((data: Rec[]) => {
+      records = data
+      const initial = new URLSearchParams(location.search).get('q') ?? ''
+      if (initial) input.value = initial
+      render(initial)
+    })
+    .catch(() => {
+      status.textContent = 'Could not load the search index.'
+    })
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+    render(input.value)
+  })
+  input.addEventListener('input', () => render(input.value))
+</script>
+
+<style>
+  .search {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: var(--space-3);
+  }
+  .search input {
+    flex: 1;
+    font-family: var(--font-ui);
+    font-size: var(--step-0);
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--rule-strong);
+    background: var(--paper);
+  }
+  .search button {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: var(--step--1);
+    padding: 0 1.4rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: 0;
+    cursor: pointer;
+  }
+  .search__status {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+  }
+  .search__results {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0 0;
+  }
+  .search__results :global(.search__item) {
+    padding-block: var(--space-2);
+    border-top: 1px solid var(--rule);
+  }
+  .search__results :global(.search__item a) {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-1);
+    color: var(--ink);
+  }
+  .search__results :global(.search__kicker) {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--flag);
+  }
+  .search__results :global(.search__item p) {
+    margin: 0.3rem 0 0;
+    color: var(--ink-soft);
+    font-size: var(--step-0);
+  }
+  .search__results :global(.search__meta) {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+  }
+</style>

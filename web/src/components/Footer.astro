@@ -1,0 +1,133 @@
+---
+import type {NavGroup} from '../lib/nav'
+import {SITE} from '../lib/site.js'
+import NewsletterCallout from './NewsletterCallout.astro'
+
+interface Props {
+  groups: NavGroup[]
+}
+const {groups} = Astro.props
+const year = new Date().getFullYear()
+---
+
+<footer class="footer">
+  <div class="container">
+    <NewsletterCallout />
+
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <p class="footer__wordmark">The Caravel</p>
+        <p class="footer__tag">{SITE.tagline}</p>
+        <p class="footer__owned">
+          Independently owned and operated by students. Not an official publication of Georgetown
+          University.
+        </p>
+      </div>
+
+      {
+        groups.map((group) => (
+          <nav class="footer__col" aria-label={group.label}>
+            <h2>{group.label}</h2>
+            <ul>
+              {group.children.map((child) => (
+                <li>
+                  <a href={child.href}>{child.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    <div class="footer__legal">
+      <p>© {year} The Caravel. All rights reserved.</p>
+      <ul>
+        <li><a href="/ethics-policy">Ethics Policy</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href={SITE.social.instagram}>Instagram</a></li>
+        <li><a href="/rss.xml">RSS</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <style>
+    .footer {
+      margin-top: var(--space-6);
+      border-top: 3px double var(--rule-strong);
+      background: var(--paper-sunk);
+      padding-block: var(--space-4) var(--space-3);
+      font-family: var(--font-ui);
+    }
+    .footer__grid {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(4, 1fr);
+      gap: var(--space-3);
+      padding-block: var(--space-4);
+      border-top: 1px solid var(--rule);
+    }
+    .footer__wordmark {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: var(--step-2);
+      margin: 0 0 0.3rem;
+    }
+    .footer__tag {
+      margin: 0 0 0.75rem;
+      color: var(--ink-soft);
+      font-size: var(--step--1);
+    }
+    .footer__owned {
+      font-size: var(--step--1);
+      color: var(--ink-faint);
+      max-width: 32ch;
+    }
+    .footer__col h2 {
+      font-family: var(--font-ui);
+      font-size: var(--step--1);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 0.6rem;
+    }
+    .footer__col ul,
+    .footer__legal ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .footer__col li {
+      margin-bottom: 0.35rem;
+    }
+    .footer__col a,
+    .footer__legal a {
+      color: var(--ink-soft);
+      font-size: var(--step--1);
+    }
+    .footer__legal {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--rule);
+      padding-top: var(--space-2);
+      font-size: var(--step--1);
+      color: var(--ink-faint);
+    }
+    .footer__legal ul {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 860px) {
+      .footer__grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 520px) {
+      .footer__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</footer>

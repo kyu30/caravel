@@ -1,0 +1,64 @@
+---
+import {SITE} from '../lib/site.js'
+
+interface Props {
+  variant?: 'bar' | 'block'
+}
+const {variant = 'bar'} = Astro.props
+---
+
+<aside class:list={['newsletter', variant]}>
+  <div class="newsletter__text">
+    <p class="kicker">The Caravel Newsletter</p>
+    <p class="newsletter__pitch">
+      Global affairs, reported by Georgetown students. In your inbox.
+    </p>
+  </div>
+  <!--
+    Buttondown — embed/link only for now (per project scope). To swap the link
+    for the inline form, paste Buttondown's embed snippet here. The form posts
+    directly to Buttondown; no backend needed.
+  -->
+  <a class="newsletter__cta" href={SITE.newsletterUrl} target="_blank" rel="noopener">
+    Subscribe
+  </a>
+
+  <style>
+    .newsletter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      border: 1px solid var(--rule-strong);
+      background: var(--paper);
+      padding: var(--space-2) var(--space-3);
+    }
+    .newsletter.block {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+    .newsletter__pitch {
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      margin: 0.2rem 0 0;
+    }
+    .newsletter__cta {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: var(--step--1);
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0.7rem 1.4rem;
+      white-space: nowrap;
+    }
+    .newsletter__cta:hover {
+      background: var(--accent);
+      color: var(--paper);
+      text-decoration: none;
+    }
+  </style>
+</aside>

@@ -1,0 +1,39 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import {SITE} from '../lib/site.js'
+---
+
+<PageLayout
+  title="About / Our History"
+  kicker="About"
+  intro={`${SITE.name} is Georgetown University's student-run international affairs newspaper.`}
+>
+  <!-- TODO: replace placeholder copy with the real history from the Squarespace "Our History" page. -->
+  <p>
+    The Caravel was founded by students in the School of Foreign Service to cover world affairs from
+    a campus that sends more graduates into diplomacy and international work than almost any other.
+    Since then it has grown into a fully student-edited publication with regional desks, a Compass
+    sub-brand for cross-cutting themes, and an alumni network reporting from around the world.
+  </p>
+
+  <h2>What we cover</h2>
+  <p>
+    Six regional desks — Africa; Eastern Europe &amp; Central Asia; Indo-Asia-Pacific; Latin America
+    &amp; The Caribbean; Southwest Asia &amp; North Africa; and Western Europe &amp; Canada — plus
+    Opinion &amp; Satire, Travel, and long-form features in the Crow's Nest. The Caravel Compass
+    follows six themes across every region: World, Elections, Gender, Coin, Futures, and Planet.
+  </p>
+
+  <h2>Independence</h2>
+  <p>
+    The Caravel is editorially independent and student-owned. It is not an official publication of
+    Georgetown University, and the views expressed are those of the authors.
+  </p>
+
+  <h2>Get involved</h2>
+  <p>
+    We take pitches from any Georgetown student — no prior experience or newsroom role required. See
+    <a href="/join">Join Our Team</a> for how the submission process works, or
+    <a href="/contact">get in touch</a>.
+  </p>
+</PageLayout>

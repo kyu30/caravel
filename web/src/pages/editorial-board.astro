@@ -1,0 +1,33 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import StaffGrid from '../components/StaffGrid.astro'
+import {getAuthors} from '../lib/queries'
+
+const authors = await getAuthors()
+const board = authors.filter((a) => a.staffGroup === 'editorial-board' && a.active !== false)
+---
+
+<PageLayout
+  title="The Editorial Board"
+  kicker="Masthead"
+  intro="The Editorial Board sets The Caravel's editorial direction and is responsible for the paper's unsigned positions."
+  wide
+>
+  {
+    board.length === 0 ? (
+      <p>
+        Editorial Board members will appear here once added in Sanity (set an author's
+        <em>Staff group</em> to “Editorial Board”).
+      </p>
+    ) : (
+      <StaffGrid people={board} showBio />
+    )
+  }
+
+  <hr />
+  <p class="prose">
+    Questions for the Editorial Board, including letters to the editor and requests for corrections,
+    can be sent via the <a href="/contact">contact page</a>. Our standards are described in the
+    <a href="/ethics-policy">Ethics Policy</a>.
+  </p>
+</PageLayout>

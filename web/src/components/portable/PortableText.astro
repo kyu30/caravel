@@ -1,0 +1,140 @@
+---
+import type {PortableBlock} from '../../lib/types'
+import {imageUrl} from '../../lib/image'
+import Span from './Span.astro'
+
+interface Props {
+  value?: PortableBlock[]
+}
+const {value = []} = Astro.props
+
+/**
+ * Minimal Portable Text renderer — headings, quotes, links, marks, lists, and
+ * inline images. Deliberately small; swap for `astro-portabletext` if the
+ * editors start needing embeds, footnotes, tables, etc.
+ */
+type Node =
+  | {kind: 'block'; block: PortableBlock}
+  | {kind: 'image'; block: PortableBlock}
+  | {kind: 'list'; listType: 'bullet' | 'number'; items: PortableBlock[]}
+
+const nodes: Node[] = []
+for (const block of value) {
+  if (block._type === 'image') {
+    nodes.push({kind: 'image', block})
+    continue
+  }
+  if (block.listItem === 'bullet' || block.listItem === 'number') {
+    const last = nodes[nodes.length - 1]
+    if (last && last.kind === 'list' && last.listType === block.listItem) {
+      last.items.push(block)
+    } else {
+      nodes.push({kind: 'list', listType: block.listItem, items: [block]})
+    }
+    continue
+  }
+  nodes.push({kind: 'block', block})
+}
+
+const spansOf = (b: PortableBlock) => b.children ?? []
+---
+
+<div class="pt">
+  {
+    nodes.map((node) => {
+      if (node.kind === 'image') {
+        const src = imageUrl(node.block as never, {width: 1200})
+        return (
+          src && (
+            <figure class="pt__figure">
+              <img src={src} alt={node.block.alt ?? ''} loading="lazy" />
+              {(node.block.caption || node.block.credit) && (
+                <figcaption>
+                  {node.block.caption}
+                  {node.block.credit && <span class="pt__credit"> — {node.block.credit}</span>}
+                </figcaption>
+              )}
+            </figure>
+          )
+        )
+      }
+
+      if (node.kind === 'list') {
+        const Tag = node.listType === 'number' ? 'ol' : 'ul'
+        return (
+          <Tag class="pt__list">
+            {node.items.map((item) => (
+              <li>
+                {spansOf(item).map((s) => (
+                  <Span text={s.text} marks={s.marks} markDefs={item.markDefs} />
+                ))}
+              </li>
+            ))}
+          </Tag>
+        )
+      }
+
+      const {block} = node
+      const spans = spansOf(block)
+      const inner = spans.map((s) => (
+        <Span text={s.text} marks={s.marks} markDefs={block.markDefs} />
+      ))
+      switch (block.style) {
+        case 'h2':
+          return <h2>{inner}</h2>
+        case 'h3':
+          return <h3>{inner}</h3>
+        case 'h4':
+          return <h4>{inner}</h4>
+        case 'blockquote':
+          return <blockquote class="pt__quote">{inner}</blockquote>
+        default:
+          return <p>{inner}</p>
+      }
+    })
+  }
+</div>
+
+<style>
+  .pt {
+    font-size: var(--step-1);
+    line-height: var(--leading-body);
+  }
+  .pt :global(h2) {
+    font-size: var(--step-2);
+    margin-top: 1.8em;
+  }
+  .pt :global(h3) {
+    font-size: var(--step-1);
+    margin-top: 1.6em;
+  }
+  .pt :global(p) {
+    margin: 0 0 1.1em;
+  }
+  .pt__quote {
+    margin: 1.6em 0;
+    padding-left: 1.1em;
+    border-left: 3px solid var(--flag);
+    font-style: italic;
+    font-size: var(--step-2);
+    color: var(--ink-soft);
+  }
+  .pt__list {
+    margin: 0 0 1.1em 1.3em;
+  }
+  .pt__list li {
+    margin-bottom: 0.4em;
+  }
+  .pt__figure {
+    margin: 2em 0;
+  }
+  .pt__figure figcaption {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    margin-top: 0.5em;
+  }
+  .pt__credit {
+    font-style: italic;
+  }
+</style>

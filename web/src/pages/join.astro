@@ -1,0 +1,98 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import {SITE} from '../lib/site.js'
+---
+
+<PageLayout
+  title="Join Our Team"
+  kicker="Write for us"
+  intro="Any Georgetown student can pitch a story. You don't need a masthead role or a CMS account — here's how it works."
+>
+  <ol class="steps">
+    <li>
+      <h2>Draft in a Google Doc</h2>
+      <p>
+        Write your piece in a Google Doc. Set sharing to <strong>“Anyone with the link can
+        comment”</strong> so an editor can leave notes.
+      </p>
+    </li>
+    <li>
+      <h2>Submit the form</h2>
+      <p>
+        Send us your name, email, the Doc link, a working title, and the region or section you think
+        it fits.
+      </p>
+      <p>
+        <a class="steps__cta" href={SITE.submissionFormUrl} target="_blank" rel="noopener">
+          Open the submission form
+        </a>
+      </p>
+    </li>
+    <li>
+      <h2>An editor reviews it</h2>
+      <p>
+        Your submission lands in our editorial queue. An editor reads the Doc, comments with edits,
+        and works with you on revisions.
+      </p>
+    </li>
+    <li>
+      <h2>We publish</h2>
+      <p>
+        Once it's ready, an editor formats the final version into The Caravel and it goes live with
+        your byline linking to an author profile.
+      </p>
+    </li>
+  </ol>
+
+  <hr />
+  <p>
+    Questions about pitching, joining a regional desk, or becoming an editor? Reach us on the
+    <a href="/contact">contact page</a>.
+  </p>
+
+  <style>
+    .steps {
+      list-style: none;
+      counter-reset: step;
+      padding: 0;
+      margin: 0;
+    }
+    .steps li {
+      counter-increment: step;
+      border-top: 3px solid var(--rule-strong);
+      padding: var(--space-3) 0;
+      position: relative;
+      padding-left: 3.5rem;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: var(--space-3);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: var(--step-2);
+      color: var(--flag);
+    }
+    .steps h2 {
+      font-size: var(--step-1);
+      margin: 0 0 0.3rem;
+    }
+    .steps__cta {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: var(--step--1);
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0.7rem 1.4rem;
+      margin-top: 0.4rem;
+    }
+    .steps__cta:hover {
+      background: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</PageLayout>

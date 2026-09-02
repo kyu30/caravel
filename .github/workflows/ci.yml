@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type-check + build web (sample-data mode)
+        run: npm run build
+        env:
+          # No Sanity project ID → build uses bundled sample content.
+          PUBLIC_SANITY_DATASET: production
+
+      - name: Build Studio
+        run: npm run studio:build
+        env:
+          SANITY_STUDIO_PROJECT_ID: placeholder
+          SANITY_STUDIO_DATASET: production

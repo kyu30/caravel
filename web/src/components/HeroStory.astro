@@ -1,0 +1,70 @@
+---
+import type {ArticleCardData} from '../lib/types'
+import {imageUrl, imageAlt} from '../lib/image'
+import Byline from './Byline.astro'
+
+interface Props {
+  article: ArticleCardData
+}
+const {article} = Astro.props
+const hero = imageUrl(article.heroImage, {width: 1600, height: 900})
+---
+
+<article class="hero">
+  {
+    hero && (
+      <a href={article.url} class="hero__media">
+        <img src={hero} alt={imageAlt(article.heroImage, article.title)} fetchpriority="high" />
+      </a>
+    )
+  }
+  <div class="hero__body">
+    {article.primarySection?.name && <p class="kicker">{article.primarySection.name}</p>}
+    <h1 class="hero__title"><a href={article.url}>{article.title}</a></h1>
+    {(article.subtitle || article.excerpt) && (
+      <p class="hero__deck">{article.subtitle ?? article.excerpt}</p>
+    )}
+    <Byline authors={article.authors} date={article.publishDate} />
+  </div>
+</article>
+
+<style>
+  .hero {
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+    border-bottom: 3px solid var(--rule-strong);
+  }
+  .hero__media img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: var(--paper-sunk);
+  }
+  .hero__title {
+    font-size: var(--step-4);
+    margin: 0.2rem 0 0.4rem;
+  }
+  .hero__title a {
+    color: var(--ink);
+  }
+  .hero__title a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .hero__deck {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 0.8rem;
+  }
+
+  @media (min-width: 900px) {
+    .hero {
+      grid-template-columns: 1.5fr 1fr;
+      align-items: center;
+      column-gap: var(--space-4);
+    }
+  }
+</style>

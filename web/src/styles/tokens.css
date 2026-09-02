@@ -1,0 +1,57 @@
+/*
+ * Design tokens — PROVISIONAL. This is a restrained newspaper baseline meant to
+ * be reviewed, not a finished visual system. Typography + palette are the first
+ * things to lock with the editor once the structure is approved.
+ *
+ * Type: system serif for display/body (swap for a licensed face — e.g. Spectral,
+ * Source Serif 4, Lyon, Tiempos — self-hosted in /public/fonts later).
+ */
+:root {
+  /* --- palette ------------------------------------------------------------- */
+  --paper: #fbfaf7;
+  --paper-sunk: #f2f0ea;
+  --ink: #17140f;
+  --ink-soft: #4a453d;
+  --ink-faint: #8a8377;
+  --rule: #d9d4c8;
+  --rule-strong: #17140f;
+
+  /* nautical navy + a signal red for kickers/labels */
+  --accent: #0b2b4e;
+  --accent-ink: #08213c;
+  --flag: #8a1c1c;
+
+  --link: var(--accent);
+  --link-hover: var(--flag);
+
+  /* --- type ------------------------------------------------------------- */
+  --font-display: 'Spectral', 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua',
+    Georgia, 'Times New Roman', serif;
+  --font-body: 'Spectral', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-ui: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+
+  /* modular scale ~1.25 */
+  --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
+  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.44rem);
+  --step-2: clamp(1.5rem, 1.35rem + 0.9vw, 2rem);
+  --step-3: clamp(1.9rem, 1.6rem + 1.6vw, 2.9rem);
+  --step-4: clamp(2.4rem, 1.9rem + 2.6vw, 4rem);
+  --step-5: clamp(3rem, 2.2rem + 4vw, 5.5rem);
+
+  --leading-tight: 1.12;
+  --leading-snug: 1.28;
+  --leading-body: 1.62;
+
+  /* --- layout ------------------------------------------------------------- */
+  --measure: 66ch;
+  --page-max: 1240px;
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --space-6: 6rem;
+}

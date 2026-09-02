@@ -1,0 +1,58 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import StaffGrid from '../components/StaffGrid.astro'
+import {getAuthors} from '../lib/queries'
+
+const authors = await getAuthors()
+const active = authors.filter((a) => a.active !== false)
+
+// Grouped for display. Order + labels are the current site's staff structure.
+const GROUPS: {value: string; label: string}[] = [
+  {value: 'masthead', label: 'Masthead'},
+  {value: 'section-editors', label: 'Section Editors'},
+  {value: 'staff-writers', label: 'Staff Writers'},
+  {value: 'contributors', label: 'Contributors'},
+]
+
+const sections = GROUPS.map((g) => ({
+  ...g,
+  people: active.filter((a) => a.staffGroup === g.value),
+})).filter((g) => g.people.length > 0)
+
+const ungrouped = active.filter((a) => !a.staffGroup)
+---
+
+<PageLayout
+  title="Our Staff"
+  kicker="Masthead"
+  intro="The students who report, edit, and produce The Caravel each semester. Editorial Board members are listed separately."
+  wide
+>
+  {
+    sections.length === 0 ? (
+      <p>Staff list coming soon. <a href="/join">Join our team →</a></p>
+    ) : (
+      sections.map((g) => (
+        <section class="staffpage__group">
+          <h2 class="section-heading"><span>{g.label}</span></h2>
+          <StaffGrid people={g.people} />
+        </section>
+      ))
+    )
+  }
+
+  {
+    ungrouped.length > 0 && (
+      <section class="staffpage__group">
+        <h2 class="section-heading"><span>Other contributors</span></h2>
+        <StaffGrid people={ungrouped} />
+      </section>
+    )
+  }
+</PageLayout>
+
+<style>
+  .staffpage__group {
+    margin-bottom: var(--space-5);
+  }
+</style>

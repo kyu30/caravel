@@ -1,0 +1,59 @@
+---
+import type {AuthorRef} from '../lib/types'
+
+interface Props {
+  authors: AuthorRef[]
+  date?: string
+  showRole?: boolean
+  class?: string
+}
+const {authors, date, showRole = false, class: className} = Astro.props
+
+const formattedDate = date
+  ? new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
+  : null
+---
+
+<p class:list={['byline', className]}>
+  {
+    authors.length > 0 && (
+      <span class="byline__authors">
+        By{' '}
+        {authors.map((a, i) => (
+          <>
+            {i > 0 && (i === authors.length - 1 ? ' and ' : ', ')}
+            <a href={`/authors/${a.slug}`} rel="author">{a.name}</a>
+          </>
+        ))}
+        {showRole && authors.length === 1 && authors[0].role && (
+          <span class="byline__role">, {authors[0].role}</span>
+        )}
+      </span>
+    )
+  }
+  {formattedDate && <time datetime={date}>{formattedDate}</time>}
+</p>
+
+<style>
+  .byline {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.6rem;
+    align-items: baseline;
+  }
+  .byline__authors a {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .byline time {
+    color: var(--ink-faint);
+  }
+  .byline__role {
+    color: var(--ink-faint);
+    font-weight: 400;
+  }
+</style>

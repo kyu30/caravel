@@ -1,0 +1,78 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro'
+import ArticleCard from '../../components/ArticleCard.astro'
+import {getSections, getArticlesByTaxonomy} from '../../lib/queries'
+
+const verticals = await getSections('compass')
+const rows = await Promise.all(
+  verticals.map(async (v) => ({
+    vertical: v,
+    articles: await getArticlesByTaxonomy(v, 3),
+  })),
+)
+---
+
+<PageLayout
+  title="Compass"
+  kicker="A Caravel sub-brand"
+  intro="Compass follows the throughlines of global affairs — the themes that cut across every region we cover."
+  wide
+>
+  <div class="compass">
+    {
+      rows.map(({vertical, articles}) => (
+        <section class="compass__vert">
+          <div class="compass__vert-head">
+            <h2>
+              <a href={`/${vertical.slug}`}>{vertical.name}</a>
+            </h2>
+            {vertical.description && <p>{vertical.description}</p>}
+          </div>
+          {articles.length > 0 ? (
+            <div class="compass__grid">
+              {articles.map((a) => (
+                <ArticleCard article={a} variant="compact" />
+              ))}
+            </div>
+          ) : (
+            <p class="compass__empty">No articles yet.</p>
+          )}
+        </section>
+      ))
+    }
+  </div>
+</PageLayout>
+
+<style>
+  .compass__vert {
+    padding-block: var(--space-4);
+    border-top: 3px solid var(--rule-strong);
+  }
+  .compass__vert-head h2 {
+    font-size: var(--step-2);
+    margin: 0;
+  }
+  .compass__vert-head h2 a {
+    color: var(--ink);
+  }
+  .compass__vert-head p {
+    color: var(--ink-soft);
+    margin: 0.3rem 0 var(--space-2);
+    max-width: 60ch;
+  }
+  .compass__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+  }
+  .compass__empty {
+    color: var(--ink-faint);
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+  }
+  @media (max-width: 820px) {
+    .compass__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

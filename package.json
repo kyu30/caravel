@@ -1,0 +1,22 @@
+{
+  "name": "caravel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Caravel — Georgetown University's student-run international affairs newspaper. Self-hosted Astro + Sanity stack.",
+  "workspaces": [
+    "web",
+    "studio"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace web",
+    "build": "npm run build --workspace web",
+    "preview": "npm run preview --workspace web",
+    "check": "npm run check --workspace web",
+    "studio": "npm run dev --workspace studio",
+    "studio:build": "npm run build --workspace studio",
+    "studio:deploy": "npm run deploy --workspace studio"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

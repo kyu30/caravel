@@ -1,0 +1,269 @@
+---
+import type {NavGroup} from '../lib/nav'
+
+interface Props {
+  groups: NavGroup[]
+}
+const {groups} = Astro.props
+const path = Astro.url.pathname
+const isActive = (href?: string) => href && (href === path || (href !== '/' && path.startsWith(href)))
+---
+
+<nav class="nav" aria-label="Primary">
+  <div class="container nav__inner">
+    <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav__toggle-bar" aria-hidden="true"></span>
+      <span class="visually-hidden">Menu</span>
+    </button>
+
+    <ul class="nav__menu" id="nav-menu">
+      <li><a href="/latest" class:list={['nav__top', {active: isActive('/latest')}]}>Latest</a></li>
+      {
+        groups.map((group) => (
+          <li class="nav__group">
+            <details class="nav__details">
+              <summary class:list={['nav__top', {active: group.children.some((c) => isActive(c.href))}]}>
+                {group.label}
+                <svg class="nav__caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+                  <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg>
+              </summary>
+              <ul class="nav__panel">
+                {group.href && (
+                  <li>
+                    <a href={group.href} class="nav__panel-overview">
+                      {group.label} overview
+                    </a>
+                  </li>
+                )}
+                {group.children.map((child) => (
+                  <li>
+                    <a href={child.href} class:list={{active: isActive(child.href)}}>
+                      {child.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </li>
+        ))
+      }
+      <li class="nav__spacer" aria-hidden="true"></li>
+      <li>
+        <a href="/search" class="nav__top nav__search" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <path d="M11 11l4 4" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+          <span>Search</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-ui);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+  }
+  .nav__menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.25rem;
+  }
+  .nav__spacer {
+    flex: 1;
+  }
+  .nav__top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.85rem 0.8rem;
+    color: var(--paper);
+    text-decoration: none;
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .nav__top:hover,
+  .nav__top.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--paper);
+    text-decoration: none;
+  }
+  summary.nav__top {
+    list-style: none;
+  }
+  summary.nav__top::-webkit-details-marker {
+    display: none;
+  }
+  .nav__details[open] > summary.nav__top {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .nav__details[open] .nav__caret {
+    transform: rotate(180deg);
+  }
+  .nav__caret {
+    transition: transform 0.15s ease;
+  }
+
+  .nav__group {
+    position: relative;
+  }
+  .nav__panel {
+    list-style: none;
+    margin: 0;
+    padding: 0.4rem 0;
+    background: var(--paper);
+    color: var(--ink);
+    min-width: 15rem;
+    border: 1px solid var(--rule);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  }
+  .nav__panel li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--ink);
+    font-size: var(--step--1);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .nav__panel li a:hover,
+  .nav__panel li a.active {
+    background: var(--paper-sunk);
+    text-decoration: none;
+  }
+  .nav__panel-overview {
+    font-weight: 700;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.3rem;
+  }
+  .nav__search svg {
+    display: block;
+  }
+  .nav__toggle {
+    display: none;
+  }
+
+  /* --- desktop: float panels ------------------------------------------ */
+  @media (min-width: 861px) {
+    .nav__panel {
+      position: absolute;
+      top: 100%;
+      left: 0;
+    }
+  }
+
+  /* --- mobile: stacked accordion ------------------------------------- */
+  @media (max-width: 860px) {
+    .nav__inner {
+      flex-wrap: wrap;
+    }
+    .nav__toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 0;
+      width: 44px;
+      height: 44px;
+      margin: 0.3rem 0;
+      cursor: pointer;
+    }
+    .nav__toggle-bar,
+    .nav__toggle-bar::before,
+    .nav__toggle-bar::after {
+      content: '';
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--paper);
+      position: relative;
+    }
+    .nav__toggle-bar::before {
+      position: absolute;
+      top: -7px;
+    }
+    .nav__toggle-bar::after {
+      position: absolute;
+      top: 7px;
+    }
+    .nav__menu {
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      padding-bottom: 0.5rem;
+    }
+    .nav__menu.open {
+      display: flex;
+    }
+    .nav__spacer {
+      display: none;
+    }
+    .nav__panel {
+      position: static;
+      box-shadow: none;
+      border: 0;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--paper);
+      margin: 0;
+    }
+    .nav__panel li a {
+      color: var(--paper);
+      padding-left: 2rem;
+    }
+    .nav__panel li a:hover,
+    .nav__panel li a.active {
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .nav__top {
+      justify-content: space-between;
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector('.nav')
+  if (root) {
+    const toggle = root.querySelector('.nav__toggle') as HTMLButtonElement | null
+    const menu = root.querySelector('.nav__menu') as HTMLElement | null
+    const details = Array.from(root.querySelectorAll('details.nav__details')) as HTMLDetailsElement[]
+
+    toggle?.addEventListener('click', () => {
+      const open = menu?.classList.toggle('open')
+      toggle.setAttribute('aria-expanded', String(!!open))
+    })
+
+    // Only one dropdown open at a time (desktop behaviour).
+    details.forEach((d) => {
+      d.addEventListener('toggle', () => {
+        if (d.open) details.filter((o) => o !== d).forEach((o) => (o.open = false))
+      })
+    })
+
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target as Node)) details.forEach((d) => (d.open = false))
+    })
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') details.forEach((d) => (d.open = false))
+    })
+  }
+</script>

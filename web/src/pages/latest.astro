@@ -1,0 +1,55 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import ArticleCard from '../components/ArticleCard.astro'
+import {getLatestArticles} from '../lib/queries'
+
+const articles = await getLatestArticles(60)
+const [lead, ...rest] = articles
+---
+
+<PageLayout
+  title="Latest"
+  kicker="All articles"
+  intro="Everything The Caravel has published, newest first."
+  wide
+>
+  {
+    articles.length === 0 ? (
+      <p>Nothing published yet.</p>
+    ) : (
+      <>
+        <div class="latest__lead">
+          <ArticleCard article={lead} variant="lead" headingLevel={2} />
+        </div>
+        <div class="latest__grid">
+          {rest.map((a) => (
+            <ArticleCard article={a} variant="standard" showExcerpt={false} />
+          ))}
+        </div>
+      </>
+    )
+  }
+</PageLayout>
+
+<style>
+  .latest__lead {
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--rule);
+  }
+  .latest__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4) var(--space-3);
+  }
+  @media (max-width: 900px) {
+    .latest__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
+    .latest__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

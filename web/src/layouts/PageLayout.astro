@@ -1,0 +1,54 @@
+---
+import BaseLayout from './BaseLayout.astro'
+
+interface Props {
+  title: string
+  intro?: string
+  description?: string
+  kicker?: string
+  wide?: boolean
+}
+const {title, intro, description, kicker, wide = false} = Astro.props
+---
+
+<BaseLayout title={title} description={description ?? intro}>
+  <div class="container page">
+    <header class="page__head">
+      {kicker && <p class="kicker">{kicker}</p>}
+      <h1 class="page__title">{title}</h1>
+      {intro && <p class="page__intro">{intro}</p>}
+    </header>
+    <div class:list={['page__content', {'page__content--prose': !wide}]}>
+      <slot />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-block: var(--space-5);
+  }
+  .page__head {
+    border-bottom: 3px solid var(--rule-strong);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .page__title {
+    font-size: var(--step-4);
+    margin: 0.2rem 0 0;
+  }
+  .page__intro {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: var(--space-2) 0 0;
+  }
+  .page__content--prose {
+    max-width: var(--measure);
+  }
+  .page__content :global(h2) {
+    font-size: var(--step-2);
+    margin-top: 1.8em;
+  }
+</style>

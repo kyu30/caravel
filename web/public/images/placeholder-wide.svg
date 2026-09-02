@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-label="Placeholder image">
+  <rect width="1600" height="1000" fill="#e9e5db"/>
+  <path d="M0 720l260-190 220 130 340-300 300 210 480-320v750H0z" fill="#d4cdbd"/>
+  <circle cx="1230" cy="230" r="90" fill="#c7bfa9"/>
+  <text x="800" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="46" fill="#8a8377">The Caravel — sample image</text>
+</svg>
