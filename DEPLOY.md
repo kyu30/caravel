@@ -34,9 +34,8 @@ ownership — `gh repo create Georgetown-Caravel/the-caravel ...`.
 
 ### Rebuild when editors publish
 
-A static build won't show new articles until it rebuilds. Add a **Deploy Hook**
-(Vercel → Settings → Git → Deploy Hooks), then in Sanity → API → **Webhooks**,
-POST to that URL on document publish. (Set up after launch; not required for v1.)
+A static build won't show new articles until it rebuilds. Full steps +
+copy-paste webhook values in [`docs/AUTO_REBUILD.md`](docs/AUTO_REBUILD.md).
 
 ## 3. Custom domain
 

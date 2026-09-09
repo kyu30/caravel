@@ -10,6 +10,6 @@ export default defineCliConfig({
    * It will be hosted at https://<studioHost>.sanity.studio
    * Set `studioHost` here or you'll be prompted on first deploy.
    */
-  // studioHost: 'caravel',
-  deployment: {autoUpdates: true},
+  studioHost: 'thecaravelgu',
+  deployment: {autoUpdates: true, appId: 'h1b3tv6jnynyep72ji1c7sxw'},
 })
