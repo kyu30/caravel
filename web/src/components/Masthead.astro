@@ -7,30 +7,28 @@ interface Props {
 const {compact = false} = Astro.props
 
 const today = new Date().toLocaleDateString('en-US', {
-  weekday: 'long',
+  weekday: 'short',
   year: 'numeric',
-  month: 'long',
+  month: 'short',
   day: 'numeric',
 })
 ---
 
 <div class:list={['masthead', {compact}]}>
   <div class="container masthead__inner">
-    <p class="masthead__meta masthead__meta--left">
-      <span>{today}</span>
-    </p>
-
-    <a href="/" class="masthead__wordmark" aria-label={`${SITE.name} — home`}>
-      <span class="masthead__the">The</span>
-      <span class="masthead__name">Caravel</span>
+    <a href="/" class="masthead__brand" aria-label={`${SITE.name} — home`}>
+      <img class="masthead__mark" src="/CaravelLogo.png" alt="" width="44" height="33" />
+      <span class="masthead__wordmark">The&nbsp;Caravel</span>
     </a>
 
-    <p class="masthead__meta masthead__meta--right">
+    <div class="masthead__meta">
+      <span class="masthead__date">{today}</span>
+      <span class="masthead__sep" aria-hidden="true">·</span>
       <span>Georgetown University</span>
+      <span class="masthead__sep" aria-hidden="true">·</span>
       <a href={SITE.newsletterUrl}>Subscribe</a>
-    </p>
+    </div>
   </div>
-  {!compact && <p class="masthead__tagline container">{SITE.tagline}</p>}
 </div>
 
 <style>
@@ -42,76 +40,72 @@ const today = new Date().toLocaleDateString('en-US', {
     padding-block: var(--space-2);
   }
   .masthead__inner {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: var(--space-2);
-  }
-  .masthead__wordmark {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .masthead__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
     color: var(--ink);
     text-decoration: none;
-    line-height: 0.9;
   }
-  .masthead__wordmark:hover {
+  .masthead__brand:hover {
     color: var(--ink);
   }
-  .masthead__the {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: var(--step-1);
-    color: var(--ink-soft);
+  .masthead__mark {
+    width: 44px;
+    height: auto;
+    flex: none;
   }
-  .masthead__name {
-    font-family: var(--font-display);
+  .compact .masthead__mark {
+    width: 34px;
+  }
+  .masthead__wordmark {
+    font-family: var(--font-sans);
     font-weight: 800;
-    letter-spacing: 0.01em;
-    font-size: var(--step-5);
-    text-transform: none;
+    letter-spacing: -0.02em;
+    font-size: var(--step-4);
+    line-height: 1;
   }
-  .compact .masthead__name {
-    font-size: var(--step-3);
-  }
-  .compact .masthead__the {
-    font-size: var(--step-0);
+  .compact .masthead__wordmark {
+    font-size: var(--step-2);
   }
   .masthead__meta {
     font-family: var(--font-ui);
     font-size: var(--step--1);
     color: var(--ink-faint);
-    margin: 0;
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
-  .masthead__meta--right {
-    text-align: right;
+  .masthead__meta a {
+    color: var(--accent);
+    font-weight: 600;
   }
-  .masthead__tagline {
-    font-family: var(--font-ui);
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-size: var(--step--1);
-    color: var(--ink-soft);
-    margin: var(--space-2) auto 0;
-    padding-top: var(--space-1);
-    border-top: 1px solid var(--rule);
-    max-width: 32rem;
+  .masthead__sep {
+    color: var(--rule);
   }
 
-  @media (max-width: 680px) {
-    .masthead__inner {
-      grid-template-columns: 1fr;
-      text-align: center;
+  @media (max-width: 640px) {
+    .masthead__wordmark {
+      font-size: var(--step-3);
     }
     .masthead__meta {
+      width: 100%;
+      font-size: 0.75rem;
+    }
+  }
+  @media (max-width: 400px) {
+    .masthead__date {
       display: none;
     }
-    .masthead__name {
-      font-size: var(--step-4);
+    .masthead__date + .masthead__sep {
+      display: none;
     }
   }
 </style>

@@ -1,53 +1,65 @@
 /*
- * Design tokens — PROVISIONAL. This is a restrained newspaper baseline meant to
- * be reviewed, not a finished visual system. Typography + palette are the first
- * things to lock with the editor once the structure is approved.
+ * Design tokens — wire-service / utilitarian direction.
  *
- * Type: system serif for display/body (swap for a licensed face — e.g. Spectral,
- * Source Serif 4, Lyon, Tiempos — self-hosted in /public/fonts later).
+ * Sans for everything structural (masthead, nav, headlines, cards, UI).
+ * Serif reserved for one job: long-form reading in the article body.
+ * Minimal ornament, near-neutral paper, a single navy accent, red used only
+ * for genuinely urgent labels (breaking / live).
+ *
+ * Faces are system stacks — zero network requests. To upgrade, self-host
+ * Inter / IBM Plex Sans (UI) + Source Serif 4 (article) in /public/fonts and
+ * swap the two --font-sans / --font-serif values. Nothing else changes.
  */
 :root {
-  /* --- palette ------------------------------------------------------------- */
-  --paper: #fbfaf7;
-  --paper-sunk: #f2f0ea;
-  --ink: #17140f;
-  --ink-soft: #4a453d;
-  --ink-faint: #8a8377;
-  --rule: #d9d4c8;
-  --rule-strong: #17140f;
+  /* --- palette --------------------------------------------------------- */
+  --paper: #ffffff;
+  --paper-sunk: #f3f4f6;
+  --paper-inset: #fafafa;
+  --ink: #16181d;
+  --ink-soft: #45484f;
+  --ink-faint: #6b7078;
+  --rule: #e2e4e8;
+  --rule-strong: #16181d;
 
-  /* nautical navy + a signal red for kickers/labels */
   --accent: #0b2b4e;
   --accent-ink: #08213c;
-  --flag: #8a1c1c;
+  --accent-wash: #eef2f7;
+
+  /* urgent only */
+  --flag: #b91c1c;
 
   --link: var(--accent);
-  --link-hover: var(--flag);
+  --link-hover: #16181d;
 
-  /* --- type ------------------------------------------------------------- */
-  --font-display: 'Spectral', 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua',
-    Georgia, 'Times New Roman', serif;
-  --font-body: 'Spectral', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
-  --font-ui: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
-    sans-serif;
+  /* --- type ----------------------------------------------------------- */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif;
+  --font-serif: 'Iowan Old Style', 'Charter', 'Georgia', 'Times New Roman', serif;
 
-  /* modular scale ~1.25 */
-  --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
-  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
-  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.44rem);
-  --step-2: clamp(1.5rem, 1.35rem + 0.9vw, 2rem);
-  --step-3: clamp(1.9rem, 1.6rem + 1.6vw, 2.9rem);
-  --step-4: clamp(2.4rem, 1.9rem + 2.6vw, 4rem);
-  --step-5: clamp(3rem, 2.2rem + 4vw, 5.5rem);
+  /* aliases used across components */
+  --font-ui: var(--font-sans);
+  --font-display: var(--font-sans);
+  --font-body: var(--font-sans);
+  --font-article: var(--font-serif);
 
-  --leading-tight: 1.12;
-  --leading-snug: 1.28;
-  --leading-body: 1.62;
+  /* tighter, less theatrical scale than a broadsheet */
+  --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.85rem);
+  --step-0: clamp(0.95rem, 0.92rem + 0.15vw, 1rem);
+  --step-1: clamp(1.1rem, 1.04rem + 0.3vw, 1.28rem);
+  --step-2: clamp(1.35rem, 1.24rem + 0.55vw, 1.7rem);
+  --step-3: clamp(1.7rem, 1.5rem + 1vw, 2.35rem);
+  --step-4: clamp(2.05rem, 1.75rem + 1.6vw, 3.1rem);
+  --step-5: clamp(2.6rem, 2rem + 3vw, 4rem);
 
-  /* --- layout ------------------------------------------------------------- */
-  --measure: 66ch;
-  --page-max: 1240px;
-  --gutter: clamp(1rem, 4vw, 3rem);
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-body: 1.6;
+  --leading-article: 1.7;
+
+  /* --- layout -------------------------------------------------------- */
+  --measure: 40rem; /* article reading column */
+  --page-max: 1200px;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
   --space-1: 0.5rem;
   --space-2: 1rem;
   --space-3: 1.5rem;

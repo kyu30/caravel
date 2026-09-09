@@ -23,7 +23,7 @@ if (!article) {
   return new Response(null, {status: 404})
 }
 
-const related = await getRelatedArticles(article, 4)
+const related = await getRelatedArticles(article, 3)
 const hero = imageUrl(article.heroImage, {width: 1600})
 const heroCredit =
   article.heroImage && typeof article.heroImage !== 'string' ? article.heroImage.credit : undefined
@@ -34,6 +34,21 @@ const tags = [
   ...(article.regions ?? []).map((r) => ({label: r.name, href: `/${r.slug}`})),
   ...(article.compassTopics ?? []).map((c) => ({label: `Compass: ${c.name}`, href: `/${c.slug}`})),
 ]
+
+const readingTime = (() => {
+  const words = (article.body ?? [])
+    .flatMap((b) => b.children ?? [])
+    .reduce((n, s) => n + (s.text?.split(/\s+/).filter(Boolean).length ?? 0), 0)
+  return words ? Math.max(1, Math.round(words / 220)) : 0
+})()
+
+const shareUrl = new URL(article.url, SITE.url).href
+const isoDate = new Date(article.publishDate).toISOString()
+const fullDate = new Date(article.publishDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+})
 ---
 
 <BaseLayout
@@ -43,63 +58,85 @@ const tags = [
   compactHeader
 >
   <article class="article">
-    <div class="container article__head">
-      <p class="kicker">
-        <a href={`/${article.primarySection.slug}`}>{article.primarySection.name}</a>
-      </p>
-      <h1 class="article__title">{article.title}</h1>
-      {article.subtitle && <p class="article__deck">{article.subtitle}</p>}
-      <Byline authors={article.authors} date={article.publishDate} showRole class="article__byline" />
+    <div class="container">
+      <div class="article__head">
+        <p class="article__kicker">
+          <a href={`/${article.primarySection.slug}`}>{article.primarySection.name}</a>
+        </p>
+        <h1 class="article__title">{article.title}</h1>
+        {article.subtitle && <p class="article__deck">{article.subtitle}</p>}
+
+        <div class="article__meta">
+          <Byline authors={article.authors} showRole class="article__byline" />
+          <p class="article__timestamp">
+            <time datetime={isoDate}>{fullDate}</time>
+            {readingTime > 0 && <span class="article__dot" aria-hidden="true">·</span>}
+            {readingTime > 0 && <span>{readingTime} min read</span>}
+          </p>
+        </div>
+      </div>
     </div>
 
     {
       hero && (
-        <figure class="article__hero">
-          <img src={hero} alt={imageAlt(article.heroImage, article.title)} />
-          {(heroCaption || heroCredit) && (
-            <figcaption class="container">
-              {heroCaption}
-              {heroCredit && <span class="article__credit"> — {heroCredit}</span>}
-            </figcaption>
-          )}
-        </figure>
+        <div class="container">
+          <figure class="article__hero">
+            <img src={hero} alt={imageAlt(article.heroImage, article.title)} />
+            {(heroCaption || heroCredit) && (
+              <figcaption>
+                {heroCaption}
+                {heroCredit && <span class="article__credit"> ({heroCredit})</span>}
+              </figcaption>
+            )}
+          </figure>
+        </div>
       )
     }
 
-    <div class="container article__body prose">
-      <PortableText value={article.body} />
+    <div class="container">
+      <div class="article__body">
+        <PortableText value={article.body} />
+      </div>
 
-      {
-        tags.length > 0 && (
-          <p class="article__tags">
-            {tags.map((t) => (
-              <a href={t.href} class="article__tag">
-                {t.label}
-              </a>
-            ))}
-          </p>
-        )
-      }
+      <div class="article__foot">
+        {
+          tags.length > 0 && (
+            <ul class="article__tags">
+              {tags.map((t) => (
+                <li>
+                  <a href={t.href}>{t.label}</a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
 
-      <p class="article__share">
-        <a
-          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(new URL(article.url, SITE.url).href)}`}
-          target="_blank"
-          rel="noopener"
-        >
-          Share on X
-        </a>
-        <a href="/latest">← Back to Latest</a>
-      </p>
+        <div class="article__share">
+          <span>Share</span>
+          <a
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(shareUrl)}`}
+            target="_blank"
+            rel="noopener"
+          >X</a>
+          <a
+            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+            target="_blank"
+            rel="noopener"
+          >LinkedIn</a>
+          <a
+            href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(shareUrl)}`}
+          >Email</a>
+        </div>
+      </div>
     </div>
 
     {
       related.length > 0 && (
         <aside class="container article__related">
-          <h2 class="section-heading"><span>Related</span></h2>
+          <h2 class="section-heading"><span>More from The Caravel</span></h2>
           <div class="article__related-grid">
             {related.map((a) => (
-              <ArticleCard article={a} variant="compact" />
+              <ArticleCard article={a} variant="compact" showImage={false} />
             ))}
           </div>
         </aside>
@@ -112,92 +149,151 @@ const tags = [
   .article {
     padding-block: var(--space-4) var(--space-6);
   }
+
+  /* --- headline block: left-aligned, news style --------------------- */
   .article__head {
-    max-width: 46rem;
-    margin-inline: auto;
-    text-align: center;
+    max-width: var(--measure);
     padding-bottom: var(--space-3);
   }
+  .article__kicker {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 0.6rem;
+  }
+  .article__kicker a {
+    color: var(--accent);
+  }
   .article__title {
+    font-family: var(--font-sans);
     font-size: var(--step-4);
-    margin: 0.3rem 0 0.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0 0 0.5rem;
   }
   .article__deck {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
     font-size: var(--step-2);
+    line-height: 1.4;
     color: var(--ink-soft);
-    margin: 0 0 1rem;
+    margin: 0 0 var(--space-3);
   }
-  .article__byline {
-    justify-content: center;
+  .article__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 1rem;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--rule);
   }
+  .article__timestamp {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    margin: 0;
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  /* --- hero: aligned to the reading column, modest height --------- */
   .article__hero {
-    margin: var(--space-3) 0 var(--space-4);
+    margin: 0 0 var(--space-4);
+    max-width: 48rem;
   }
   .article__hero img {
     width: 100%;
-    max-height: 68vh;
+    aspect-ratio: 16 / 9;
     object-fit: cover;
     background: var(--paper-sunk);
   }
   .article__hero figcaption {
+    margin-top: 0.5rem;
+    max-width: var(--measure);
     font-family: var(--font-ui);
     font-size: var(--step--1);
     color: var(--ink-faint);
-    margin-top: 0.5rem;
+    line-height: 1.4;
   }
   .article__credit {
-    font-style: italic;
+    color: var(--ink-faint);
   }
+
+  /* --- body ----------------------------------------------------- */
   .article__body {
-    margin-inline: auto;
+    max-width: var(--measure);
   }
-  .article__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+
+  /* --- footer: tags + share ----------------------------------- */
+  .article__foot {
+    max-width: var(--measure);
     margin-top: var(--space-4);
     padding-top: var(--space-3);
-    border-top: 1px solid var(--rule);
+    border-top: 2px solid var(--rule-strong);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3);
   }
-  .article__tag {
+  .article__tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0;
+    margin: 0;
+  }
+  .article__tags a {
+    display: inline-block;
     font-family: var(--font-ui);
     font-size: var(--step--1);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: 1px solid var(--rule-strong);
+    letter-spacing: 0.02em;
     padding: 0.3rem 0.6rem;
-    color: var(--ink);
+    background: var(--paper-sunk);
+    color: var(--ink-soft);
   }
-  .article__tag:hover {
-    background: var(--ink);
-    color: var(--paper);
+  .article__tags a:hover {
+    background: var(--accent);
+    color: #fff;
     text-decoration: none;
   }
   .article__share {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
     font-family: var(--font-ui);
     font-size: var(--step--1);
-    margin-top: var(--space-3);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
+  .article__share span {
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+  .article__share a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* --- related ------------------------------------------------ */
   .article__related {
     margin-top: var(--space-6);
   }
   .article__related-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-3);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
   }
-  @media (max-width: 900px) {
-    .article__related-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 520px) {
+  @media (max-width: 720px) {
     .article__related-grid {
       grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .article__related-grid :global(.card) {
+      padding-block: var(--space-2);
+      border-bottom: 1px solid var(--rule);
     }
   }
 </style>

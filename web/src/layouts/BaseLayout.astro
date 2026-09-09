@@ -50,13 +50,7 @@ const nav = await getNav()
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
 
     <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="theme-color" content="#16181d" />
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
@@ -73,7 +67,7 @@ const nav = await getNav()
 
     <style>
       .site-header {
-        border-bottom: 3px double var(--rule-strong);
+        border-bottom: 2px solid var(--rule-strong);
       }
     </style>
   </body>

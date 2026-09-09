@@ -30,6 +30,7 @@ h4 {
   font-family: var(--font-display);
   line-height: var(--leading-tight);
   font-weight: 700;
+  letter-spacing: -0.011em;
   margin: 0 0 0.4em;
   text-wrap: balance;
 }
@@ -76,8 +77,13 @@ hr {
   font-family: var(--font-ui);
   font-size: var(--step--1);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* opt-in urgent variant */
+.kicker--urgent {
   color: var(--flag);
 }
 
@@ -92,23 +98,35 @@ hr {
 .section-heading {
   font-family: var(--font-ui);
   font-size: var(--step-1);
-  font-weight: 800;
-  letter-spacing: 0.01em;
+  font-weight: 700;
+  letter-spacing: -0.005em;
   padding-bottom: var(--space-1);
-  border-bottom: 3px solid var(--rule-strong);
+  border-bottom: 2px solid var(--rule-strong);
   margin-bottom: var(--space-3);
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
 }
+.section-heading > span:first-child {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.section-heading > span:first-child::before {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--accent);
+  align-self: center;
+}
 .section-heading a {
   font-size: var(--step--1);
   font-weight: 600;
   font-family: var(--font-ui);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
 }
 
 .skip-link {
