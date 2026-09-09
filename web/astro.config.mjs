@@ -8,13 +8,9 @@ import {SITE} from './src/lib/site.js'
 export default defineConfig({
   site: SITE.url,
   output: 'static',
+  // Default 'directory' format → /africa/index.html, which Vercel's static
+  // hosting serves at /africa. 'file' format (africa.html) needs cleanUrls and
+  // broke routing on Vercel.
   trailingSlash: 'never',
   integrations: [sitemap()],
-  build: {
-    format: 'file',
-  },
-  vite: {
-    // Surface a clear message instead of a stack trace when env vars are missing.
-    define: {},
-  },
 })
