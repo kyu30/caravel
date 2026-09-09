@@ -17,8 +17,13 @@ const today = new Date().toLocaleDateString('en-US', {
 <div class:list={['masthead', {compact}]}>
   <div class="container masthead__inner">
     <a href="/" class="masthead__brand" aria-label={`${SITE.name} — home`}>
-      <img class="masthead__mark" src="/CaravelLogo.png" alt="" width="44" height="33" />
-      <span class="masthead__wordmark">The&nbsp;Caravel</span>
+      <img
+        class="masthead__logo"
+        src="/caravel-logo.png"
+        alt={SITE.name}
+        width="800"
+        height="400"
+      />
     </a>
 
     <div class="masthead__meta">
@@ -34,10 +39,8 @@ const today = new Date().toLocaleDateString('en-US', {
 <style>
   .masthead {
     background: var(--paper);
-    padding-block: var(--space-3) var(--space-2);
-  }
-  .masthead.compact {
-    padding-block: var(--space-2);
+    /* logo sits flush to the band edges — it defines the masthead height */
+    padding-block: 0;
   }
   .masthead__inner {
     display: flex;
@@ -45,34 +48,22 @@ const today = new Date().toLocaleDateString('en-US', {
     justify-content: space-between;
     gap: var(--space-3);
     flex-wrap: wrap;
+    min-height: 80px;
+  }
+  .compact .masthead__inner {
+    min-height: 80px;
   }
   .masthead__brand {
     display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    color: var(--ink);
-    text-decoration: none;
+    line-height: 0;
   }
-  .masthead__brand:hover {
-    color: var(--ink);
-  }
-  .masthead__mark {
-    width: 44px;
-    height: auto;
+  .masthead__logo {
+    width: auto;
+    height: 80px;
     flex: none;
   }
-  .compact .masthead__mark {
-    width: 34px;
-  }
-  .masthead__wordmark {
-    font-family: var(--font-sans);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    font-size: var(--step-4);
-    line-height: 1;
-  }
-  .compact .masthead__wordmark {
-    font-size: var(--step-2);
+  .compact .masthead__logo {
+    height: 80px;
   }
   .masthead__meta {
     font-family: var(--font-ui);
@@ -92,8 +83,13 @@ const today = new Date().toLocaleDateString('en-US', {
   }
 
   @media (max-width: 640px) {
-    .masthead__wordmark {
-      font-size: var(--step-3);
+    .masthead__inner,
+    .compact .masthead__inner {
+      min-height: 0;
+      padding-block: 0.6rem;
+    }
+    .masthead__logo {
+      height: 44px;
     }
     .masthead__meta {
       width: 100%;
