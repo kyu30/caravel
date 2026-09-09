@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css'
-import Masthead from '../components/Masthead.astro'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
 import {SITE} from '../lib/site.js'
@@ -55,9 +54,62 @@ const nav = await getNav()
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
     <header class="site-header">
-      <Masthead compact={compactHeader} />
       <Nav groups={nav} />
+      <div class="dateline">
+        <div class="container dateline__inner">
+          <span>{
+            new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })
+          }</span>
+          <span class="dateline__right">
+            <span>Georgetown University</span>
+            <span class="dateline__sep" aria-hidden="true">·</span>
+            <a href={SITE.newsletterUrl}>Subscribe</a>
+          </span>
+        </div>
+      </div>
     </header>
+
+    <style>
+      .dateline {
+        background: var(--paper);
+        border-bottom: 2px solid var(--rule-strong);
+        font-family: var(--font-ui);
+        font-size: 0.75rem;
+        color: var(--ink-faint);
+      }
+      .dateline__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-block: 0.4rem;
+      }
+      .dateline__right {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .dateline__right a {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .dateline__sep {
+        color: var(--rule);
+      }
+      @media (max-width: 460px) {
+        .dateline__inner > span:first-child {
+          display: none;
+        }
+        .dateline__inner {
+          justify-content: flex-end;
+        }
+      }
+    </style>
 
     <main id="main">
       <slot />
@@ -65,10 +117,5 @@ const nav = await getNav()
 
     <Footer groups={nav} />
 
-    <style>
-      .site-header {
-        border-bottom: 2px solid var(--rule-strong);
-      }
-    </style>
   </body>
 </html>
