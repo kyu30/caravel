@@ -44,6 +44,7 @@ export async function getNav(): Promise<NavGroup[]> {
       children: [
         ...editorial.map((s) => ({label: s.name, href: `/${s.slug}`})),
         {label: 'Latest', href: '/latest'},
+        {label: 'Archive', href: '/archive'},
       ],
     },
     {

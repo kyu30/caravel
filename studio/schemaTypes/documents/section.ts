@@ -28,6 +28,7 @@ const RESERVED_SLUGS = [
   'compass',
   'search',
   'latest',
+  'archive',
   'api',
   'rss.xml',
   'sitemap.xml',

@@ -30,9 +30,12 @@ const heroCredit =
 const heroCaption =
   article.heroImage && typeof article.heroImage !== 'string' ? article.heroImage.caption : undefined
 
+const year = article.publishDate.slice(0, 4)
+
 const tags = [
   ...(article.regions ?? []).map((r) => ({label: r.name, href: `/${r.slug}`})),
   ...(article.compassTopics ?? []).map((c) => ({label: `Compass: ${c.name}`, href: `/${c.slug}`})),
+  {label: year, href: `/search?year=${year}`},
 ]
 
 const readingTime = (() => {

@@ -100,6 +100,14 @@ export async function getLatestArticles(limit = 12): Promise<ArticleCardData[]> 
   )
 }
 
+/** Every published article, newest first, no limit. Powers /archive. */
+export async function getAllArticlesChrono(): Promise<ArticleCardData[]> {
+  if (USE_SAMPLE_DATA) return [...sampleArticles].sort(byDateDesc)
+  return q<ArticleCardData[]>(
+    /* groq */ `*[${PUBLISHED}]|order(publishDate desc){${CARD_FIELDS}}`,
+  )
+}
+
 export async function getFeaturedArticles(limit = 4): Promise<ArticleCardData[]> {
   if (USE_SAMPLE_DATA) {
     return [...sampleArticles].filter((a) => a.featured).sort(byDateDesc).slice(0, limit)

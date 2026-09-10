@@ -4,8 +4,8 @@ import PageLayout from '../layouts/PageLayout.astro'
 
 <PageLayout
   title="Search"
-  kicker="Archive"
-  intro="Search articles by headline, summary, section, or author. Basic text match for now — filters and full-text search come later."
+  kicker="Find an article"
+  intro="Search articles by headline, summary, section, or author, and narrow by year. Basic text match for now — full-text search comes later."
   wide
 >
   <form class="search" role="search" id="search-form">
@@ -18,6 +18,10 @@ import PageLayout from '../layouts/PageLayout.astro'
       autocomplete="off"
       autofocus
     />
+    <label class="visually-hidden" for="year">Filter by year</label>
+    <select id="year" name="year">
+      <option value="">All years</option>
+    </select>
     <button type="submit">Search</button>
   </form>
 
@@ -37,6 +41,7 @@ import PageLayout from '../layouts/PageLayout.astro'
 
   const form = document.getElementById('search-form') as HTMLFormElement
   const input = document.getElementById('q') as HTMLInputElement
+  const yearSelect = document.getElementById('year') as HTMLSelectElement
   const status = document.getElementById('search-status') as HTMLElement
   const results = document.getElementById('search-results') as HTMLElement
 
@@ -47,24 +52,34 @@ import PageLayout from '../layouts/PageLayout.astro'
 
   function render(query: string) {
     const q = query.trim().toLowerCase()
+    const year = yearSelect.value
+
     const params = new URLSearchParams(location.search)
     if (q) params.set('q', q)
     else params.delete('q')
+    if (year) params.set('year', year)
+    else params.delete('year')
     history.replaceState(null, '', `${location.pathname}${params.toString() ? '?' + params : ''}`)
 
-    if (!q) {
+    if (!q && !year) {
       results.innerHTML = ''
       status.textContent = `${records.length} articles indexed. Type to search.`
       return
     }
 
-    const terms = q.split(/\s+/)
-    const matches = records.filter((r) => {
-      const hay = `${r.title} ${r.excerpt} ${r.section} ${r.authors.join(' ')}`.toLowerCase()
-      return terms.every((t) => hay.includes(t))
-    })
+    let matches = records
+    if (year) matches = matches.filter((r) => r.date.slice(0, 4) === year)
+    if (q) {
+      const terms = q.split(/\s+/)
+      matches = matches.filter((r) => {
+        const hay = `${r.title} ${r.excerpt} ${r.section} ${r.authors.join(' ')}`.toLowerCase()
+        return terms.every((t) => hay.includes(t))
+      })
+    }
 
-    status.textContent = `${matches.length} result${matches.length === 1 ? '' : 's'} for “${query.trim()}”`
+    const forQ = q ? ` for “${query.trim()}”` : ''
+    const inYear = year ? ` in ${year}` : ''
+    status.textContent = `${matches.length} result${matches.length === 1 ? '' : 's'}${forQ}${inYear}`
     results.innerHTML = matches
       .map(
         (r) => `
@@ -81,9 +96,21 @@ import PageLayout from '../layouts/PageLayout.astro'
     .then((res) => res.json())
     .then((data: Rec[]) => {
       records = data
-      const initial = new URLSearchParams(location.search).get('q') ?? ''
-      if (initial) input.value = initial
-      render(initial)
+
+      const years = [...new Set(data.map((r) => r.date.slice(0, 4)))].sort(
+        (a, b) => Number(b) - Number(a),
+      )
+      yearSelect.insertAdjacentHTML(
+        'beforeend',
+        years.map((y) => `<option value="${y}">${y}</option>`).join(''),
+      )
+
+      const params = new URLSearchParams(location.search)
+      const initialQ = params.get('q') ?? ''
+      const initialYear = params.get('year') ?? ''
+      if (initialQ) input.value = initialQ
+      if (initialYear && years.includes(initialYear)) yearSelect.value = initialYear
+      render(initialQ)
     })
     .catch(() => {
       status.textContent = 'Could not load the search index.'
@@ -94,6 +121,7 @@ import PageLayout from '../layouts/PageLayout.astro'
     render(input.value)
   })
   input.addEventListener('input', () => render(input.value))
+  yearSelect.addEventListener('change', () => render(input.value))
 </script>
 
 <style>
@@ -101,14 +129,24 @@ import PageLayout from '../layouts/PageLayout.astro'
     display: flex;
     gap: 0.5rem;
     margin-bottom: var(--space-3);
+    flex-wrap: wrap;
   }
   .search input {
-    flex: 1;
+    flex: 1 1 16rem;
     font-family: var(--font-ui);
     font-size: var(--step-0);
     padding: 0.7rem 0.9rem;
     border: 1px solid var(--rule-strong);
     background: var(--paper);
+  }
+  .search select {
+    flex: 0 0 auto;
+    font-family: var(--font-ui);
+    font-size: var(--step-0);
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--rule-strong);
+    background: var(--paper);
+    color: var(--ink);
   }
   .search button {
     font-family: var(--font-ui);

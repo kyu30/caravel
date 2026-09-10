@@ -18,16 +18,11 @@ const formattedDate = date
   {
     authors.length > 0 && (
       <span class="byline__authors">
-        By{' '}
-        {authors.map((a, i) => (
-          <>
-            {i > 0 && (i === authors.length - 1 ? ' and ' : ', ')}
-            <a href={`/authors/${a.slug}`} rel="author">{a.name}</a>
-          </>
-        ))}
-        {showRole && authors.length === 1 && authors[0].role && (
+        {'By '}{authors.map((a, i) => (
+          <>{i > 0 ? (i === authors.length - 1 ? ' and ' : ', ') : ''}<a href={`/authors/${a.slug}`} rel="author">{a.name}</a></>
+        ))}{showRole && authors.length === 1 && authors[0].role ? (
           <span class="byline__role">, {authors[0].role}</span>
-        )}
+        ) : null}
       </span>
     )
   }

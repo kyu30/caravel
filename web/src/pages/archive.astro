@@ -1,0 +1,87 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import ArticleCard from '../components/ArticleCard.astro'
+import {getAllArticlesChrono} from '../lib/queries'
+import type {ArticleCardData} from '../lib/types'
+
+const articles = await getAllArticlesChrono()
+
+// Bucket by calendar year. publishDate is an ISO-8601 UTC string, so the first
+// four characters are the year — timezone-stable, no Date allocation.
+const groups = new Map<string, ArticleCardData[]>()
+for (const a of articles) {
+  const year = a.publishDate.slice(0, 4)
+  const bucket = groups.get(year)
+  if (bucket) bucket.push(a)
+  else groups.set(year, [a])
+}
+const years = [...groups.entries()].sort((a, b) => Number(b[0]) - Number(a[0]))
+---
+
+<PageLayout
+  title="Archive"
+  kicker="Browse by year"
+  intro="Every article The Caravel has published, grouped by year."
+  wide
+>
+  {
+    years.length === 0 ? (
+      <p>Nothing published yet.</p>
+    ) : (
+      years.map(([year, list]) => (
+        <section class="archive__year">
+          <h2 class="archive__heading">
+            <span>{year}</span>
+            <span class="archive__count">
+              {list.length} article{list.length === 1 ? '' : 's'}
+            </span>
+          </h2>
+          <ul class="archive__list">
+            {list.map((a) => (
+              <li>
+                <ArticleCard
+                  article={a}
+                  variant="row"
+                  showImage={false}
+                  showExcerpt={false}
+                  headingLevel={3}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    )
+  }
+</PageLayout>
+
+<style>
+  .archive__year {
+    margin-bottom: var(--space-5);
+  }
+  .archive__heading {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    margin: 0 0 var(--space-2);
+    padding-bottom: var(--space-1);
+    border-bottom: 2px solid var(--rule-strong);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+  .archive__count {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    font-weight: 400;
+  }
+  .archive__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .archive__list :global(.card--row:last-child) {
+    border-bottom: 0;
+  }
+</style>
