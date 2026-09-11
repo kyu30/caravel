@@ -36,13 +36,6 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
                 </span>
               </summary>
               <ul class="nav__panel">
-                {group.href && (
-                  <li>
-                    <a href={group.href} class="nav__panel-overview">
-                      {group.label} overview
-                    </a>
-                  </li>
-                )}
                 {group.children.map((child) => (
                   <li>
                     <a href={child.href} class:list={{active: isActive(child.href)}}>
@@ -183,11 +176,6 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
     background: var(--paper-sunk);
     text-decoration: none;
   }
-  .nav__panel-overview {
-    font-weight: 700;
-    border-bottom: 1px solid var(--rule);
-    margin-bottom: 0.3rem;
-  }
   .nav__search {
     gap: 0.5rem;
   }
@@ -294,26 +282,25 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
       position: static;
       box-shadow: none;
       border: 0;
-      border-left: 2px solid rgba(255, 255, 255, 0.16);
-      background: rgba(255, 255, 255, 0.04);
+      background: transparent;
       color: var(--paper);
-      margin: 0 0 0.35rem 1rem;
+      margin: 0;
+      padding: 0.25rem 0 0.5rem;
       min-width: 0;
-      width: auto;
+      width: 100%;
     }
     .nav__panel li a {
-      color: rgba(255, 255, 255, 0.82);
-      padding: 0.65rem 1rem;
+      color: rgba(255, 255, 255, 0.72);
+      padding: 0.55rem 0.2rem 0.55rem 1.6rem;
       font-size: var(--step--1);
     }
     .nav__panel li a:hover,
     .nav__panel li a.active {
-      background: rgba(255, 255, 255, 0.1);
+      background: transparent;
       color: var(--paper);
     }
-    .nav__panel li a.nav__panel-overview {
-      color: var(--paper);
-      border-bottom-color: rgba(255, 255, 255, 0.16);
+    .nav__panel li a.active {
+      font-weight: 700;
     }
     .nav__top {
       justify-content: space-between;
