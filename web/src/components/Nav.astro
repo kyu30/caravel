@@ -250,6 +250,15 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
     .nav__spacer {
       display: none;
     }
+    /* undo the desktop flex-centering so summary + panel stack instead of
+       sitting side by side */
+    .nav__group {
+      align-self: auto;
+    }
+    .nav__group .nav__details {
+      display: block;
+      height: auto;
+    }
     .nav__panel {
       position: static;
       box-shadow: none;
@@ -257,6 +266,8 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
       background: rgba(255, 255, 255, 0.06);
       color: var(--paper);
       margin: 0;
+      min-width: 0;
+      width: 100%;
     }
     .nav__panel li a {
       color: var(--paper);
