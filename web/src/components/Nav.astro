@@ -216,7 +216,7 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
       border: 0;
       width: 44px;
       height: 44px;
-      margin: 0.3rem 0;
+      margin: 0.3rem 0 0.3rem auto;
       cursor: pointer;
     }
     .nav__toggle-bar,
@@ -281,6 +281,11 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
       justify-content: space-between;
       width: 100%;
     }
+    /* free up vertical space for the open accordion — the logo isn't needed
+       while you're browsing the menu */
+    .nav.menu-open .nav__brand {
+      display: none;
+    }
   }
 </style>
 
@@ -293,6 +298,7 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
 
     toggle?.addEventListener('click', () => {
       const open = menu?.classList.toggle('open')
+      root.classList.toggle('menu-open', !!open)
       toggle.setAttribute('aria-expanded', String(!!open))
     })
 
