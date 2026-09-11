@@ -180,8 +180,12 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
     border-bottom: 1px solid var(--rule);
     margin-bottom: 0.3rem;
   }
+  .nav__search {
+    gap: 0.5rem;
+  }
   .nav__search svg {
     display: block;
+    flex: none;
   }
   .nav__toggle {
     display: none;
@@ -224,31 +228,50 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
     .nav__toggle-bar::after {
       content: '';
       display: block;
-      width: 22px;
+      width: 20px;
       height: 2px;
       background: var(--paper);
       position: relative;
+      transition: transform 0.18s ease, opacity 0.18s ease, top 0.18s ease;
     }
     .nav__toggle-bar::before {
       position: absolute;
-      top: -7px;
+      top: -6px;
     }
     .nav__toggle-bar::after {
       position: absolute;
-      top: 7px;
+      top: 6px;
+    }
+    /* morph the hamburger into an × while the menu is open */
+    .menu-open .nav__toggle-bar {
+      background: transparent;
+    }
+    .menu-open .nav__toggle-bar::before {
+      top: 0;
+      transform: rotate(45deg);
+    }
+    .menu-open .nav__toggle-bar::after {
+      top: 0;
+      transform: rotate(-45deg);
     }
     .nav__menu {
       display: none;
       flex-direction: column;
       align-items: stretch;
       width: 100%;
-      padding-bottom: 0.5rem;
+      padding-block: 0.25rem 0.75rem;
     }
     .nav__menu.open {
       display: flex;
     }
     .nav__spacer {
       display: none;
+    }
+    .nav__menu > li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .nav__menu > li:last-child {
+      border-bottom: 0;
     }
     /* undo the desktop flex-centering so summary + panel stack instead of
        sitting side by side */
@@ -263,23 +286,34 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
       position: static;
       box-shadow: none;
       border: 0;
-      background: rgba(255, 255, 255, 0.06);
+      border-left: 2px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.04);
       color: var(--paper);
-      margin: 0;
+      margin: 0 0 0.35rem 1rem;
       min-width: 0;
-      width: 100%;
+      width: auto;
     }
     .nav__panel li a {
-      color: var(--paper);
-      padding-left: 2rem;
+      color: rgba(255, 255, 255, 0.82);
+      padding: 0.65rem 1rem;
+      font-size: var(--step--1);
     }
     .nav__panel li a:hover,
     .nav__panel li a.active {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--paper);
+    }
+    .nav__panel li a.nav__panel-overview {
+      color: var(--paper);
+      border-bottom-color: rgba(255, 255, 255, 0.16);
     }
     .nav__top {
       justify-content: space-between;
       width: 100%;
+      padding: 0.9rem 0.2rem;
+    }
+    .nav__search {
+      justify-content: flex-start;
     }
     /* free up vertical space for the open accordion — the logo isn't needed
        while you're browsing the menu */
