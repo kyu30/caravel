@@ -30,13 +30,13 @@ export const sampleSections: Taxonomy[] = [
 
 export const sampleAuthors: Author[] = [
   {
-    _id: 'a-rivera', name: 'Mara Rivera', slug: 'mara-rivera', role: 'Editor-in-Chief', staffGroup: 'editorial-board', active: true,
+    _id: 'a-rivera', name: 'Mara Rivera', slug: 'mara-rivera', role: 'Editor-in-Chief', staffGroup: 'masthead', active: true,
     headshot: img('/images/avatar.svg', 'Mara Rivera'),
     bio: [para('Mara is a senior in the School of Foreign Service studying International Politics. She has covered SWANA and elections for The Caravel since her first year.')],
     socialLinks: [{platform: 'twitter', url: 'https://twitter.com/'}],
   },
   {
-    _id: 'a-osei', name: 'Daniel Osei', slug: 'daniel-osei', role: 'Managing Editor', staffGroup: 'editorial-board', active: true,
+    _id: 'a-osei', name: 'Daniel Osei', slug: 'daniel-osei', role: 'Managing Editor', staffGroup: 'masthead', active: true,
     headshot: img('/images/avatar.svg', 'Daniel Osei'),
     bio: [para('Daniel studies Economics and writes on trade and development across West Africa.')],
   },

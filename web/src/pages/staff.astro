@@ -7,8 +7,9 @@ const authors = await getAuthors()
 const active = authors.filter((a) => a.active !== false)
 
 // Grouped for display. Order + labels are the current site's staff structure.
+// Masthead leadership has its own page — see /masthead.
 const GROUPS: {value: string; label: string}[] = [
-  {value: 'masthead', label: 'Masthead'},
+  {value: 'editorial-board', label: 'Editorial Board'},
   {value: 'section-editors', label: 'Section Editors'},
   {value: 'staff-writers', label: 'Staff Writers'},
   {value: 'contributors', label: 'Contributors'},
@@ -24,8 +25,8 @@ const ungrouped = active.filter((a) => !a.staffGroup)
 
 <PageLayout
   title="Our Staff"
-  kicker="Masthead"
-  intro="The students who report, edit, and produce The Caravel each semester. Editorial Board members are listed separately."
+  kicker="About"
+  intro="The students who report, edit, and produce The Caravel each semester. Masthead leadership is listed separately."
   wide
 >
   {

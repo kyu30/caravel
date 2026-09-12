@@ -1,0 +1,48 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import StaffGrid from '../components/StaffGrid.astro'
+import {getAuthors} from '../lib/queries'
+import type {Author} from '../lib/types'
+
+// Masthead leadership sorts by rank, not name. Extend this list if the paper
+// adds more ranked roles (e.g. 'managing editor') — anything not listed falls
+// back to alphabetical by name.
+const ROLE_PRIORITY = ['publisher', 'editor-in-chief']
+function roleRank(role?: string): number {
+  if (!role) return ROLE_PRIORITY.length
+  const rank = ROLE_PRIORITY.indexOf(role.trim().toLowerCase())
+  return rank === -1 ? ROLE_PRIORITY.length : rank
+}
+function byMastheadRank(a: Author, b: Author) {
+  return roleRank(a.role) - roleRank(b.role) || a.name.localeCompare(b.name)
+}
+
+const authors = await getAuthors()
+const masthead = authors
+  .filter((a) => a.staffGroup === 'masthead' && a.active !== false)
+  .sort(byMastheadRank)
+---
+
+<PageLayout
+  title="Masthead"
+  kicker="Leadership"
+  intro="The students who lead The Caravel's editorial direction."
+  wide
+>
+  {
+    masthead.length === 0 ? (
+      <p>
+        Masthead leadership will appear here once added in Sanity (set an author's
+        <em>Staff group</em> to “Masthead”).
+      </p>
+    ) : (
+      <StaffGrid people={masthead} />
+    )
+  }
+
+  <hr />
+  <p class="prose">
+    Looking for the rest of the team? See <a href="/staff">Our Staff</a>, including the Editorial
+    Board. Questions can be sent via the <a href="/contact">contact page</a>.
+  </p>
+</PageLayout>

@@ -18,7 +18,7 @@ import {TagIcon} from '@sanity/icons'
 const RESERVED_SLUGS = [
   'about',
   'staff',
-  'editorial-board',
+  'masthead',
   'bunn-award-winners',
   'join',
   'contact',

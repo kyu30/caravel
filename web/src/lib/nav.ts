@@ -12,8 +12,8 @@ export interface NavGroup {
 
 export const ABOUT_LINKS: NavLink[] = [
   {label: 'About / Our History', href: '/about'},
+  {label: 'Masthead', href: '/masthead'},
   {label: 'Our Staff', href: '/staff'},
-  {label: 'The Editorial Board', href: '/editorial-board'},
   {label: 'Bunn Award Winners', href: '/bunn-award-winners'},
   {label: 'Join Our Team', href: '/join'},
   {label: 'Contact', href: '/contact'},
