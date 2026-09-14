@@ -84,8 +84,14 @@ build the automation without being asked.
 
 - Nav: **Option 1** single dropdown bar (built).
 - Type: **traditional broadsheet**, Spectral (current baseline).
-- Map: **placeholder now**, `react-simple-maps` later — do NOT add the dep
-  without a green light. `RegionalMap.astro` is a dependency-free schematic.
+- Map: **built**, dependency-free — `RegionalMap.astro` stacks mapchart.net PNG
+  exports (`web/public/images/map/`) and crossfades on hover/focus via a small
+  script. Click-through hit-areas are SVG `clipPath`s traced from the actual
+  highlighted pixels in each source PNG (`web/src/lib/mapShapes.ts`, regenerate
+  per the script in `docs/MAP_PLAN.md` if the source images change). No
+  `react-simple-maps`/d3-geo — superseded, see `docs/MAP_PLAN.md`. The `swana`
+  and `eeca` source PNGs are still provisional (mismatched North Africa /
+  Central Asia coverage) — swap them once regenerated on mapchart.net.
 
 ## Still open / not started
 
@@ -95,8 +101,8 @@ build the automation without being asked.
   this (their choice of repo name/org).
 - Sanity project — user creates it (`SETUP.md`); until then everything runs on
   sample data.
-- `react-simple-maps` map, Google Form sync, archive content migration,
-  Buttondown embed beyond the link.
+- Regenerate the `swana`/`eeca` map PNGs (see above), Google Form sync, archive
+  content migration, Buttondown embed beyond the link.
 
 ## Gotchas
 

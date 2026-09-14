@@ -1,6 +1,5 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro'
-import RegionalMap from '../../components/RegionalMap.astro'
 import {getRegions, getArticlesByTaxonomy} from '../../lib/queries'
 
 const regions = await getRegions()
@@ -15,11 +14,9 @@ const withCounts = await Promise.all(
 <PageLayout
   title="Regions"
   kicker="Coverage"
-  intro="The Caravel organizes its reporting into six world regions. Choose one on the map, or from the list below."
+  intro="The Caravel organizes its reporting into six world regions."
   wide
 >
-  <RegionalMap regions={regions} />
-
   <ul class="regionlist">
     {
       withCounts.map(({region, latest}) => (
