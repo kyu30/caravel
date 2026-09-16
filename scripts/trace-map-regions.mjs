@@ -28,12 +28,36 @@ const REGIONS = [
 
 const SAMPLE_W = 400 // downscaled analysis width — polygons are % based, so this only affects trace fidelity
 
+// All six mapchart.net exports carry a stray ~74x74px navy square in open
+// Pacific ocean at the same spot — a perfect square, so almost certainly a
+// leftover legend/UI swatch baked into the export rather than a real
+// territory. Patch it to white before tracing so it never becomes a spurious
+// tiny polygon. Kept in sync with the same constant in build-map-assets.mjs.
+const ARTIFACT_RECT_PCT = {left: 8.0, top: 60.9, width: 1.9, height: 3.1}
+
+async function loadPatchedSource(file) {
+  const path = `${SRC_DIR}/${file}`
+  const {width, height} = await sharp(path).metadata()
+  const rect = {
+    left: Math.round((ARTIFACT_RECT_PCT.left / 100) * width),
+    top: Math.round((ARTIFACT_RECT_PCT.top / 100) * height),
+    width: Math.round((ARTIFACT_RECT_PCT.width / 100) * width),
+    height: Math.round((ARTIFACT_RECT_PCT.height / 100) * height),
+  }
+  const patch = await sharp({
+    create: {width: rect.width, height: rect.height, channels: 4, background: '#ffffff'},
+  })
+    .png()
+    .toBuffer()
+  return sharp(path).composite([{input: patch, left: rect.left, top: rect.top}]).png().toBuffer()
+}
+
 function quantize(r, g, b) {
   return `${Math.round(r / 12) * 12},${Math.round(g / 12) * 12},${Math.round(b / 12) * 12}`
 }
 
-async function detectNavy(path) {
-  const {data, info} = await sharp(path).resize({width: 200}).raw().ensureAlpha().toBuffer({resolveWithObject: true})
+async function detectNavy(input) {
+  const {data, info} = await sharp(input).resize({width: 200}).raw().ensureAlpha().toBuffer({resolveWithObject: true})
   const {width, height, channels} = info
   const counts = new Map()
   for (let i = 0; i < width * height; i++) {
@@ -137,10 +161,10 @@ function toPercent(poly, width, height) {
 
 const result = {}
 for (const {slug, file} of REGIONS) {
-  const path = `${SRC_DIR}/${file}`
-  const navy = await detectNavy(path)
+  const patched = await loadPatchedSource(file)
+  const navy = await detectNavy(patched)
 
-  const {data, info} = await sharp(path).resize({width: SAMPLE_W}).raw().ensureAlpha().toBuffer({resolveWithObject: true})
+  const {data, info} = await sharp(patched).resize({width: SAMPLE_W}).raw().ensureAlpha().toBuffer({resolveWithObject: true})
   const {width, height, channels} = info
   const mask = new Uint8Array(width * height)
   const TOL = 30
