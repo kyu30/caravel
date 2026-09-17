@@ -26,7 +26,7 @@ Create a form titled **"Pitch a story — The Caravel"** with these questions
 | 3 | Google Doc link | Short answer (validation: URL) | ✅ |
 | 4 | Working title | Short answer | ✅ |
 | 5 | Suggested region | Dropdown (the 6 regions + "Not sure") | – |
-| 6 | Suggested section / Compass topic | Dropdown (Opinion & Satire, Crow's Nest, Travel, World, Elections, Gender, Coin, Futures, Planet, "Not sure") | – |
+| 6 | Suggested section / Compass topic | Dropdown (Opinion & Satire, Crow's Nest, Travel, Elections, Planet, "Not sure") | – |
 | 7 | Pitch / summary | Paragraph | ✅ |
 | 8 | Anything else for the editors | Paragraph | – |
 
@@ -34,7 +34,7 @@ Create a form titled **"Pitch a story — The Caravel"** with these questions
   or on, your call.
 - Responses → **Link to Sheets**.
 - Put the form's share URL into `web/src/lib/site.js` → `SITE.submissionFormUrl`
-  (the **Join Our Team** and **Contact** pages link to it).
+  (the **About** and **Contact** pages link to it).
 
 ## Later: sync Sheet → Sanity `submission`
 

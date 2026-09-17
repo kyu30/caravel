@@ -60,7 +60,7 @@ pages, related articles), not part of the URL.
 `submission` (editorial queue — NOT public, nothing on the site reads it).
 
 Taxonomy is seeded, not authored: `studio/seed/taxonomy.ndjson` (6 regions, 3
-editorial sections, 6 Compass verticals) → `npx sanity dataset import`.
+editorial sections, 2 Compass verticals) → `npx sanity dataset import`.
 
 ## Writer workflow (context for `submission`)
 
@@ -82,7 +82,10 @@ build the automation without being asked.
 
 ## Open decisions (confirmed so far)
 
-- Nav: **Option 1** single dropdown bar (built).
+- Nav: single dark bar — `Latest` / `Archive` top-level, then `About` / `Regions`
+  / `Compass` dropdowns (`web/src/lib/nav.ts` + `Nav.astro`). No `Sections`
+  dropdown — Crow's Nest is folded into the Regions dropdown; Opinion & Satire
+  and Travel aren't in the nav at all (reachable via the homepage/search).
 - Type: **traditional broadsheet**, Spectral (current baseline).
 - Map: **built**, dependency-free — `RegionalMap.astro` stacks mapchart.net PNG
   exports (`web/public/images/map/`) and crossfades on hover/focus via a small

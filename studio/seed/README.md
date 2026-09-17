@@ -1,6 +1,6 @@
 # Seed data
 
-`taxonomy.ndjson` contains the 6 regions, 3 editorial sections, and 6 Compass
+`taxonomy.ndjson` contains the 6 regions, 3 editorial sections, and 2 Compass
 verticals from the current site. Import it once, right after creating the Sanity
 project, so editors don't have to type them in:
 

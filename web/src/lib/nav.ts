@@ -14,16 +14,15 @@ export const ABOUT_LINKS: NavLink[] = [
   {label: 'About / Our History', href: '/about'},
   {label: 'Masthead', href: '/masthead'},
   {label: 'Our Staff', href: '/staff'},
-  {label: 'Bunn Award Winners', href: '/bunn-award-winners'},
-  {label: 'Join Our Team', href: '/join'},
   {label: 'Contact', href: '/contact'},
-  {label: 'Ethics Policy', href: '/ethics-policy'},
 ]
 
 /**
- * Primary navigation, mirroring the current site's dropdown structure
- * (About / Regions / Sections / Compass). Built from Sanity taxonomy so new
- * sections appear automatically.
+ * Primary navigation: Latest / Archive (top-level) + About / Regions / Compass
+ * dropdowns. Built from Sanity taxonomy so new regions/Compass verticals
+ * appear automatically. The editorial sections (Opinion & Satire, Travel) sit
+ * outside the nav entirely — reachable from the homepage — except Crow's Nest,
+ * which is folded into the Regions dropdown alongside the six regions.
  */
 export async function getNav(): Promise<NavGroup[]> {
   const [regions, editorial, compass] = await Promise.all([
@@ -31,20 +30,16 @@ export async function getNav(): Promise<NavGroup[]> {
     getSections('editorial'),
     getSections('compass'),
   ])
+  const crowsNest = editorial.find((s) => s.slug === 'crows-nest')
 
   return [
     {label: 'About', href: '/about', children: ABOUT_LINKS},
     {
       label: 'Regions',
       href: '/regions',
-      children: regions.map((r) => ({label: r.name, href: `/${r.slug}`})),
-    },
-    {
-      label: 'Sections',
       children: [
-        ...editorial.map((s) => ({label: s.name, href: `/${s.slug}`})),
-        {label: 'Latest', href: '/latest'},
-        {label: 'Archive', href: '/archive'},
+        ...regions.map((r) => ({label: r.name, href: `/${r.slug}`})),
+        ...(crowsNest ? [{label: crowsNest.name, href: `/${crowsNest.slug}`}] : []),
       ],
     },
     {

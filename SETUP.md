@@ -30,7 +30,7 @@ Copy the project ID it prints — you'll need it in step 3.
 npx sanity dataset import seed/taxonomy.ndjson production
 ```
 
-Creates the 6 regions, 3 editorial sections, and 6 Compass verticals.
+Creates the 6 regions, 3 editorial sections, and 2 Compass verticals (Elections, Planet).
 
 ## 3. Point the web app at it
 

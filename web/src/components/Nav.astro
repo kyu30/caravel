@@ -23,6 +23,7 @@ const isActive = (href?: string) => href && (href === path || (href !== '/' && p
 
     <ul class="nav__menu" id="nav-menu">
       <li><a href="/latest" class:list={['nav__top', {active: isActive('/latest')}]}>Latest</a></li>
+      <li><a href="/archive" class:list={['nav__top', {active: isActive('/archive')}]}>Archive</a></li>
       {
         groups.map((group) => (
           <li class="nav__group">

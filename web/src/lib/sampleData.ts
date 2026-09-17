@@ -20,11 +20,7 @@ export const sampleSections: Taxonomy[] = [
   {_id: 's-opinion', _type: 'section', name: 'Opinion & Satire', slug: 'opinion-satire', kind: 'editorial', order: 10, description: 'Argument, commentary, and satire from our columnists and contributors.'},
   {_id: 's-crows', _type: 'section', name: "Crow's Nest", slug: 'crows-nest', kind: 'editorial', order: 20, description: 'Long-form features and dispatches from the masthead.'},
   {_id: 's-travel', _type: 'section', name: 'Travel', slug: 'travel', kind: 'editorial', order: 30, description: 'Reporting and reflection from the road.'},
-  {_id: 's-c-world', _type: 'section', name: 'World', slug: 'world', kind: 'compass', order: 10, description: 'Compass: the through-line stories shaping global affairs.'},
   {_id: 's-c-elections', _type: 'section', name: 'Elections', slug: 'elections', kind: 'compass', order: 20, description: 'Compass: campaigns, ballots, and transfers of power worldwide.'},
-  {_id: 's-c-gender', _type: 'section', name: 'Gender', slug: 'gender', kind: 'compass', order: 30, description: 'Compass: gender, power, and rights across borders.'},
-  {_id: 's-c-coin', _type: 'section', name: 'Coin', slug: 'coin', kind: 'compass', order: 40, description: 'Compass: trade, markets, and the global economy.'},
-  {_id: 's-c-futures', _type: 'section', name: 'Futures', slug: 'futures', kind: 'compass', order: 50, description: 'Compass: technology, security, and what comes next.'},
   {_id: 's-c-planet', _type: 'section', name: 'Planet', slug: 'planet', kind: 'compass', order: 60, description: 'Compass: climate, energy, and the environment.'},
 ]
 
@@ -101,7 +97,7 @@ const inputs: SampleInput[] = [
     slug: 'vienna-coalition-talks-collapse', subtitle: 'Three weeks of negotiations end without a government, forcing a second round of talks.',
     excerpt: 'Austria’s mainstream parties failed to agree on a governing coalition, leaving the country in political limbo weeks after an election that reordered its parliament.',
     date: daysAgo(1), featured: true, primary: R['western-europe-canada'], regions: [R['western-europe-canada']],
-    compass: [S['elections'], S['world']], authors: [A['luca-costa'], A['mara-rivera']],
+    compass: [S['elections']], authors: [A['luca-costa'], A['mara-rivera']],
     hero: img('/images/placeholder-wide.svg', 'Parliament building at dusk'),
     body: [
       'Coalition negotiations in Vienna broke down on Tuesday after the two largest parties failed to bridge differences on migration and budget policy, according to officials familiar with the talks.',
@@ -113,7 +109,7 @@ const inputs: SampleInput[] = [
     id: 'art-2', title: 'In Nairobi, a fintech boom runs ahead of its regulators',
     slug: 'nairobi-fintech-boom-regulators', subtitle: 'Mobile lending has reached millions. Oversight has not kept pace.',
     excerpt: 'Kenya’s digital lending sector has expanded faster than the rules meant to govern it, leaving borrowers exposed and regulators playing catch-up.',
-    date: daysAgo(3), featured: true, primary: R['africa'], regions: [R['africa']], compass: [S['coin']],
+    date: daysAgo(3), featured: true, primary: R['africa'], regions: [R['africa']],
     authors: [A['daniel-osei']], hero: img('/images/placeholder-wide.svg', 'City skyline'),
     body: [
       'A wave of mobile lending apps has transformed access to credit in Kenya, but consumer advocates warn that interest rates and collection practices remain poorly policed.',
@@ -123,7 +119,7 @@ const inputs: SampleInput[] = [
   {
     id: 'art-3', title: 'The Pacific’s new undersea cables are also a security contest',
     slug: 'pacific-undersea-cables-security', excerpt: 'Island nations weigh competing offers to build the infrastructure that carries their internet — and the strategic strings attached.',
-    date: daysAgo(4), primary: S['futures'], regions: [R['indo-asia-pacific']], compass: [S['futures'], S['world']],
+    date: daysAgo(4), primary: R['indo-asia-pacific'], regions: [R['indo-asia-pacific']],
     authors: [A['grace-kim']], hero: img('/images/placeholder-wide.svg', 'Ocean horizon'),
   },
   {
@@ -146,15 +142,15 @@ const inputs: SampleInput[] = [
   {
     id: 'art-6', title: 'Brazil’s supreme court test for platform liability, explained',
     slug: 'brazil-platform-liability-explained', excerpt: 'A ruling expected this term could rewrite the rules for social media across Latin America.',
-    date: daysAgo(11), primary: R['latin-america-caribbean'], regions: [R['latin-america-caribbean']], compass: [S['futures']],
+    date: daysAgo(11), primary: R['latin-america-caribbean'], regions: [R['latin-america-caribbean']],
     authors: [A['grace-kim'], A['daniel-osei']], hero: img('/images/placeholder-wide.svg', 'Courthouse columns'),
   },
   {
     id: 'art-7', title: 'Women candidates broke records in three SWANA elections. Then came the math.',
     slug: 'swana-women-candidates-records', subtitle: 'Historic nominations did not translate into proportional seats.',
     excerpt: 'Across three recent votes, women stood for office in unprecedented numbers — and electoral systems blunted the result.',
-    date: daysAgo(14), featured: true, primary: S['gender'], regions: [R['southwest-asia-north-africa']],
-    compass: [S['gender'], S['elections']], authors: [A['mara-rivera'], A['nadia-haddad']],
+    date: daysAgo(14), featured: true, primary: R['southwest-asia-north-africa'], regions: [R['southwest-asia-north-africa']],
+    compass: [S['elections']], authors: [A['mara-rivera'], A['nadia-haddad']],
     hero: img('/images/placeholder-wide.svg', 'Polling station'),
     body: [
       'In three SWANA elections held over the past year, a record share of candidates were women. The share of women elected barely moved.',
