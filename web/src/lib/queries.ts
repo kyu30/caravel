@@ -26,7 +26,7 @@ const CARD_FIELDS = /* groq */ `
   "excerpt": coalesce(excerpt, subtitle),
   publishDate,
   featured,
-  heroImage{alt, caption, credit, asset},
+  heroImage{alt, caption, credit, creditUrl, asset},
   "authors": authors[]->{_id, name, "slug": slug.current, role},
   "primarySection": primarySection->{_id, _type, name, "slug": slug.current},
   "regions": regions[]->{_id, name, "slug": slug.current},

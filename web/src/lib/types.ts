@@ -13,6 +13,7 @@ export interface SanityImage {
   alt?: string
   caption?: string
   credit?: string
+  creditUrl?: string
   // … or a plain URL string source (sample data).
   src?: string
 }
@@ -86,4 +87,5 @@ export interface PortableBlock {
   alt?: string
   caption?: string
   credit?: string
+  creditUrl?: string
 }

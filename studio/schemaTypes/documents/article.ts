@@ -69,6 +69,13 @@ export default defineType({
         },
         {name: 'caption', type: 'string', title: 'Caption'},
         {name: 'credit', type: 'string', title: 'Credit / source'},
+        {
+          name: 'creditUrl',
+          type: 'url',
+          title: 'Credit link',
+          description: 'Optional — if set, the credit text links out to the original source.',
+          validation: (rule) => rule.uri({scheme: ['http', 'https']}),
+        },
       ],
     },
     {

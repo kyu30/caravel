@@ -27,6 +27,8 @@ const related = await getRelatedArticles(article, 3)
 const hero = imageUrl(article.heroImage, {width: 1600})
 const heroCredit =
   article.heroImage && typeof article.heroImage !== 'string' ? article.heroImage.credit : undefined
+const heroCreditUrl =
+  article.heroImage && typeof article.heroImage !== 'string' ? article.heroImage.creditUrl : undefined
 const heroCaption =
   article.heroImage && typeof article.heroImage !== 'string' ? article.heroImage.caption : undefined
 
@@ -88,7 +90,20 @@ const fullDate = new Date(article.publishDate).toLocaleDateString('en-US', {
             {(heroCaption || heroCredit) && (
               <figcaption>
                 {heroCaption}
-                {heroCredit && <span class="article__credit"> ({heroCredit})</span>}
+                {heroCredit && (
+                  <span class="article__credit">
+                    {' '}
+                    (
+                    {heroCreditUrl ? (
+                      <a href={heroCreditUrl} target="_blank" rel="noopener noreferrer">
+                        {heroCredit}
+                      </a>
+                    ) : (
+                      heroCredit
+                    )}
+                    )
+                  </span>
+                )}
               </figcaption>
             )}
           </figure>
@@ -222,6 +237,14 @@ const fullDate = new Date(article.publishDate).toLocaleDateString('en-US', {
   }
   .article__credit {
     color: var(--ink-faint);
+  }
+  .article__credit a {
+    color: var(--ink-faint);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .article__credit a:hover {
+    color: var(--accent);
   }
 
   /* --- body ----------------------------------------------------- */

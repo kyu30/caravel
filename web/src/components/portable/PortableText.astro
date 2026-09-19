@@ -51,7 +51,18 @@ const spansOf = (b: PortableBlock) => b.children ?? []
               {(node.block.caption || node.block.credit) && (
                 <figcaption>
                   {node.block.caption}
-                  {node.block.credit && <span class="pt__credit"> — {node.block.credit}</span>}
+                  {node.block.credit && (
+                    <span class="pt__credit">
+                      {' — '}
+                      {node.block.creditUrl ? (
+                        <a href={node.block.creditUrl} target="_blank" rel="noopener noreferrer">
+                          {node.block.credit}
+                        </a>
+                      ) : (
+                        node.block.credit
+                      )}
+                    </span>
+                  )}
                 </figcaption>
               )}
             </figure>
