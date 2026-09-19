@@ -91,18 +91,7 @@ const fullDate = new Date(article.publishDate).toLocaleDateString('en-US', {
               <figcaption>
                 {heroCaption}
                 {heroCredit && (
-                  <span class="article__credit">
-                    {' '}
-                    (
-                    {heroCreditUrl ? (
-                      <a href={heroCreditUrl} target="_blank" rel="noopener noreferrer">
-                        {heroCredit}
-                      </a>
-                    ) : (
-                      heroCredit
-                    )}
-                    )
-                  </span>
+                  <span class="article__credit">{' ('}{heroCreditUrl ? <a href={heroCreditUrl} target="_blank" rel="noopener noreferrer">{heroCredit}</a> : heroCredit}{')'}</span>
                 )}
               </figcaption>
             )}
