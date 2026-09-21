@@ -13,6 +13,7 @@ import {
   sampleRegions,
   sampleSections,
 } from './sampleData'
+import {slugifyTag} from './tags'
 
 // --- GROQ fragments --------------------------------------------------------
 const PUBLISHED = `_type == "article" && status == "published" && publishDate <= now()`
@@ -30,7 +31,8 @@ const CARD_FIELDS = /* groq */ `
   "authors": authors[]->{_id, name, "slug": slug.current, role},
   "primarySection": primarySection->{_id, _type, name, "slug": slug.current},
   "regions": regions[]->{_id, name, "slug": slug.current},
-  "compassTopics": compassTopics[]->{_id, name, "slug": slug.current}
+  "compassTopics": compassTopics[]->{_id, name, "slug": slug.current},
+  tags
 `
 
 const ARTICLE_FIELDS = /* groq */ `
@@ -57,6 +59,14 @@ function byDateDesc<T extends {publishDate: string}>(a: T, b: T) {
 async function q<T>(query: string, params: Record<string, unknown> = {}): Promise<T> {
   if (!sanityClient) throw new Error('sanityClient unavailable')
   return sanityClient.fetch<T>(query, params)
+}
+
+/** Every published article, newest first, no limit — shared by /archive, search, and tags. */
+async function getAllPublishedArticles(): Promise<ArticleCardData[]> {
+  if (USE_SAMPLE_DATA) return [...sampleArticles].sort(byDateDesc)
+  return q<ArticleCardData[]>(
+    /* groq */ `*[${PUBLISHED}]|order(publishDate desc){${CARD_FIELDS}}`,
+  )
 }
 
 // --- taxonomy ----------------------------------------------------------
@@ -102,10 +112,7 @@ export async function getLatestArticles(limit = 12): Promise<ArticleCardData[]> 
 
 /** Every published article, newest first, no limit. Powers /archive. */
 export async function getAllArticlesChrono(): Promise<ArticleCardData[]> {
-  if (USE_SAMPLE_DATA) return [...sampleArticles].sort(byDateDesc)
-  return q<ArticleCardData[]>(
-    /* groq */ `*[${PUBLISHED}]|order(publishDate desc){${CARD_FIELDS}}`,
-  )
+  return getAllPublishedArticles()
 }
 
 export async function getFeaturedArticles(limit = 4): Promise<ArticleCardData[]> {
@@ -203,6 +210,29 @@ export async function getRelatedArticles(article: ArticleCardData, limit = 4): P
   )
 }
 
+// --- freeform tags --------------------------------------------------------
+// Tags are stored as plain display text on the article, not pre-slugified —
+// matching against a route param is done in JS via slugifyTag() rather than
+// in GROQ.
+
+/** Every distinct tag across published articles, for /tag/[tag]'s getStaticPaths. */
+export async function getAllTagRoutes(): Promise<{slug: string; label: string}[]> {
+  const articles = await getAllPublishedArticles()
+  const bySlug = new Map<string, string>()
+  for (const a of articles) {
+    for (const tag of a.tags ?? []) {
+      const slug = slugifyTag(tag)
+      if (slug && !bySlug.has(slug)) bySlug.set(slug, tag)
+    }
+  }
+  return [...bySlug.entries()].map(([slug, label]) => ({slug, label}))
+}
+
+export async function getArticlesByTagSlug(tagSlug: string, limit = 60): Promise<ArticleCardData[]> {
+  const articles = await getAllPublishedArticles()
+  return articles.filter((a) => (a.tags ?? []).some((t) => slugifyTag(t) === tagSlug)).slice(0, limit)
+}
+
 // --- authors --------------------------------------------------------
 export async function getAuthors(): Promise<Author[]> {
   if (USE_SAMPLE_DATA) return [...sampleAuthors].sort((a, b) => a.name.localeCompare(b.name))
@@ -241,11 +271,7 @@ export interface SearchRecord {
 }
 
 export async function getSearchIndex(): Promise<SearchRecord[]> {
-  const articles = USE_SAMPLE_DATA
-    ? [...sampleArticles].sort(byDateDesc)
-    : await q<ArticleCardData[]>(
-        /* groq */ `*[${PUBLISHED}]|order(publishDate desc){${CARD_FIELDS}}`,
-      )
+  const articles = await getAllPublishedArticles()
   return articles.map((a) => ({
     title: a.title,
     url: a.url,

@@ -61,6 +61,8 @@ export interface ArticleCardData {
   primarySection: Pick<Taxonomy, '_id' | '_type' | 'name' | 'slug'>
   regions?: Pick<Taxonomy, '_id' | 'name' | 'slug'>[]
   compassTopics?: Pick<Taxonomy, '_id' | 'name' | 'slug'>[]
+  /** Freeform keywords, plain display text (not pre-slugified) — see lib/tags.ts */
+  tags?: string[]
 }
 
 export interface Article extends ArticleCardData {

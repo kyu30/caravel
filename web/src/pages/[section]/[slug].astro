@@ -9,6 +9,7 @@ import {
   getArticleBySlug,
   getRelatedArticles,
 } from '../../lib/queries'
+import {slugifyTag} from '../../lib/tags'
 import {SITE} from '../../lib/site.js'
 
 export async function getStaticPaths() {
@@ -34,11 +35,12 @@ const heroCaption =
 
 const year = article.publishDate.slice(0, 4)
 
-const tags = [
+const taxonomyTags = [
   ...(article.regions ?? []).map((r) => ({label: r.name, href: `/${r.slug}`})),
   ...(article.compassTopics ?? []).map((c) => ({label: `Compass: ${c.name}`, href: `/${c.slug}`})),
   {label: year, href: `/search?year=${year}`},
 ]
+const freeformTags = (article.tags ?? []).map((t) => ({label: t, href: `/tag/${slugifyTag(t)}`}))
 
 const readingTime = (() => {
   const words = (article.body ?? [])
@@ -106,17 +108,33 @@ const fullDate = new Date(article.publishDate).toLocaleDateString('en-US', {
       </div>
 
       <div class="article__foot">
-        {
-          tags.length > 0 && (
-            <ul class="article__tags">
-              {tags.map((t) => (
-                <li>
-                  <a href={t.href}>{t.label}</a>
-                </li>
-              ))}
-            </ul>
-          )
-        }
+        <div class="article__tag-groups">
+          {
+            taxonomyTags.length > 0 && (
+              <ul class="article__tags">
+                {taxonomyTags.map((t) => (
+                  <li>
+                    <a href={t.href}>{t.label}</a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          {
+            freeformTags.length > 0 && (
+              <div class="article__tag-row">
+                <span class="article__tag-label">Tags</span>
+                <ul class="article__tags">
+                  {freeformTags.map((t) => (
+                    <li>
+                      <a href={t.href}>{t.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+        </div>
 
         <div class="article__share">
           <span>Share</span>
@@ -273,6 +291,25 @@ const fullDate = new Date(article.publishDate).toLocaleDateString('en-US', {
     background: var(--accent);
     color: #fff;
     text-decoration: none;
+  }
+  .article__tag-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .article__tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .article__tag-label {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
   }
   .article__share {
     font-family: var(--font-ui);

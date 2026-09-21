@@ -26,6 +26,7 @@ const RESERVED_SLUGS = [
   'search',
   'latest',
   'archive',
+  'tag',
   'api',
   'rss.xml',
   'sitemap.xml',

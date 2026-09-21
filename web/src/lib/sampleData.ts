@@ -82,6 +82,7 @@ interface SampleInput {
   primary: Taxonomy
   regions?: Taxonomy[]
   compass?: Taxonomy[]
+  tags?: string[]
   authors: Author[]
   hero: {src: string; alt: string; credit?: string}
   body?: string[]
@@ -97,7 +98,7 @@ const inputs: SampleInput[] = [
     slug: 'vienna-coalition-talks-collapse', subtitle: 'Three weeks of negotiations end without a government, forcing a second round of talks.',
     excerpt: 'Austria’s mainstream parties failed to agree on a governing coalition, leaving the country in political limbo weeks after an election that reordered its parliament.',
     date: daysAgo(1), featured: true, primary: R['western-europe-canada'], regions: [R['western-europe-canada']],
-    compass: [S['elections']], authors: [A['luca-costa'], A['mara-rivera']],
+    compass: [S['elections']], tags: ['Far Right', 'Coalition Government'], authors: [A['luca-costa'], A['mara-rivera']],
     hero: img('/images/placeholder-wide.svg', 'Parliament building at dusk'),
     body: [
       'Coalition negotiations in Vienna broke down on Tuesday after the two largest parties failed to bridge differences on migration and budget policy, according to officials familiar with the talks.',
@@ -150,7 +151,7 @@ const inputs: SampleInput[] = [
     slug: 'swana-women-candidates-records', subtitle: 'Historic nominations did not translate into proportional seats.',
     excerpt: 'Across three recent votes, women stood for office in unprecedented numbers — and electoral systems blunted the result.',
     date: daysAgo(14), featured: true, primary: R['southwest-asia-north-africa'], regions: [R['southwest-asia-north-africa']],
-    compass: [S['elections']], authors: [A['mara-rivera'], A['nadia-haddad']],
+    compass: [S['elections']], tags: ['Gender', 'Electoral Systems', 'Far Right'], authors: [A['mara-rivera'], A['nadia-haddad']],
     hero: img('/images/placeholder-wide.svg', 'Polling station'),
     body: [
       'In three SWANA elections held over the past year, a record share of candidates were women. The share of women elected barely moved.',
@@ -180,5 +181,6 @@ export const sampleArticles: Article[] = inputs.map((i) => ({
   primarySection: taxRef(i.primary),
   regions: (i.regions ?? []).map(taxRef),
   compassTopics: (i.compass ?? []).map(taxRef),
+  tags: i.tags,
   body: i.body?.map(para),
 }))

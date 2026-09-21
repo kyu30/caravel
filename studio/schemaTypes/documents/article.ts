@@ -122,6 +122,17 @@ export default defineType({
       validation: (rule) => rule.unique(),
     },
     {
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      group: 'placement',
+      of: [{type: 'string'}],
+      options: {layout: 'tags'},
+      description:
+        'Freeform keywords (e.g. "Sanctions", "Refugees") — separate from regions/Compass, shown as their own row on the article and each linking to a /tag page.',
+      validation: (rule) => rule.unique(),
+    },
+    {
       name: 'featured',
       title: 'Featured',
       type: 'boolean',
