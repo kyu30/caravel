@@ -31,6 +31,10 @@ export async function getNav(): Promise<NavGroup[]> {
     getSections('compass'),
   ])
   const crowsNest = editorial.find((s) => s.slug === 'crows-nest')
+  // Only the big regions shown on the homepage map (mapId set) belong in the
+  // dropdown — finer-grained country tags also live in `region` docs but
+  // aren't map regions and would clutter the nav.
+  const mapRegions = regions.filter((r) => r.mapId)
 
   return [
     {label: 'About', href: '/about', children: ABOUT_LINKS},
@@ -38,7 +42,7 @@ export async function getNav(): Promise<NavGroup[]> {
       label: 'Regions',
       href: '/regions',
       children: [
-        ...regions.map((r) => ({label: r.name, href: `/${r.slug}`})),
+        ...mapRegions.map((r) => ({label: r.name, href: `/${r.slug}`})),
         ...(crowsNest ? [{label: crowsNest.name, href: `/${crowsNest.slug}`}] : []),
       ],
     },
