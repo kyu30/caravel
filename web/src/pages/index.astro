@@ -9,14 +9,12 @@ import {
   getLatestArticles,
   getRegions,
   getArticlesByTaxonomy,
-  getSections,
 } from '../lib/queries'
 
-const [featured, latest, regions, compass] = await Promise.all([
+const [featured, latest, regions] = await Promise.all([
   getFeaturedArticles(5),
   getLatestArticles(14),
   getRegions(),
-  getSections('compass'),
 ])
 
 const lead = featured[0] ?? latest[0]
@@ -32,10 +30,6 @@ const regionRows = await Promise.all(
   })),
 )
 
-const compassIds = compass.map((c) => c._id)
-const compassArticles = latest.filter((a) =>
-  (a.compassTopics ?? []).some((t) => compassIds.includes(t._id)),
-)
 ---
 
 <BaseLayout>
@@ -76,19 +70,6 @@ const compassArticles = latest.filter((a) =>
       ))
     }
 
-    <section class="home__compass">
-      <div class="home__compass-head">
-        <p class="kicker">The Caravel Compass</p>
-        <h2>Topic verticals, across every region</h2>
-        <a href="/compass">About Compass →</a>
-      </div>
-      <div class="home__latest-grid">
-        {compassArticles.slice(0, 4).map((a) => (
-          <ArticleCard article={a} variant="compact" />
-        ))}
-      </div>
-    </section>
-
     <section class="home__map">
       <h2 class="section-heading"><span>Explore by region</span></h2>
       <RegionalMap regions={regions} />
@@ -114,44 +95,6 @@ const compassArticles = latest.filter((a) =>
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-3);
-  }
-  .home__compass {
-    margin-block: var(--space-5);
-    padding: var(--space-4);
-    background: var(--accent-ink);
-    color: var(--paper);
-  }
-  .home__compass :global(.card__title a),
-  .home__compass :global(.byline__authors a) {
-    color: var(--paper);
-  }
-  .home__compass :global(.byline),
-  .home__compass :global(.byline time) {
-    color: rgba(255, 255, 255, 0.7);
-  }
-  .home__compass-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.5rem 1.5rem;
-    margin-bottom: var(--space-3);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-    padding-bottom: var(--space-2);
-  }
-  .home__compass-head .kicker {
-    color: #e7b96b;
-    flex-basis: 100%;
-  }
-  .home__compass-head h2 {
-    margin: 0;
-    font-size: var(--step-2);
-  }
-  .home__compass-head a {
-    color: var(--paper);
-    font-family: var(--font-ui);
-    font-size: var(--step--1);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
   }
   .home__map {
     margin-block: var(--space-5);
