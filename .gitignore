@@ -31,3 +31,14 @@ yarn-error.log*
 .vscode/*
 !.vscode/extensions.json
 *.swp
+
+# archive migration scratch -- regenerable, may contain unpublished/legacy
+# content and real names; never belongs in git history
+scripts/migrate-wxr/.out/
+Squarespace-Wordpress-Export-*.xml
+
+# stray local render output (e.g. Quarto/RStudio rendering a docs/*.md) --
+# docs/ is markdown-only by convention
+docs/.Rhistory
+docs/*_files/
+docs/*.html
