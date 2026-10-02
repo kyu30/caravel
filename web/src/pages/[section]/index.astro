@@ -23,6 +23,14 @@ const isCompass = taxonomy._type === 'section' && taxonomy.kind === 'compass'
 const kicker = isRegion ? 'Region' : isCompass ? 'Compass' : 'Section'
 
 const [lead, ...rest] = articles
+
+// `statement.body` is plain multiline text (not Portable Text) -- split on
+// blank lines so multi-paragraph statements render as separate <p>s instead
+// of HTML collapsing the line breaks into one run-on paragraph.
+const statementParagraphs = (taxonomy.statement?.body ?? '')
+  .split(/\n\s*\n/)
+  .map((p) => p.trim())
+  .filter(Boolean)
 ---
 
 <BaseLayout title={taxonomy.name} description={taxonomy.description}>
@@ -36,10 +44,10 @@ const [lead, ...rest] = articles
     </header>
 
     {
-      taxonomy.statement && (taxonomy.statement.heading || taxonomy.statement.body) && (
+      taxonomy.statement && (taxonomy.statement.heading || statementParagraphs.length > 0) && (
         <div class="sec__statement">
           {taxonomy.statement.heading && <h2>{taxonomy.statement.heading}</h2>}
-          {taxonomy.statement.body && <p>{taxonomy.statement.body}</p>}
+          {statementParagraphs.map((p) => <p>{p}</p>)}
         </div>
       )
     }
@@ -107,6 +115,9 @@ const [lead, ...rest] = articles
     line-height: 1.6;
     color: var(--ink-soft);
     margin: 0;
+  }
+  .sec__statement p + p {
+    margin-top: 1em;
   }
   .sec__lead {
     padding-bottom: var(--space-4);
