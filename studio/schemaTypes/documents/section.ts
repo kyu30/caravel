@@ -78,6 +78,17 @@ export default defineType({
       rows: 3,
     },
     {
+      name: 'statement',
+      title: 'Editorial statement',
+      type: 'object',
+      description:
+        'Optional longer statement shown below the short description on the section page.',
+      fields: [
+        {name: 'heading', title: 'Heading', type: 'string'},
+        {name: 'body', title: 'Body', type: 'text', rows: 8},
+      ],
+    },
+    {
       name: 'order',
       title: 'Nav order',
       type: 'number',

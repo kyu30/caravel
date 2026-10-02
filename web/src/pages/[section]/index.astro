@@ -36,6 +36,15 @@ const [lead, ...rest] = articles
     </header>
 
     {
+      taxonomy.statement && (taxonomy.statement.heading || taxonomy.statement.body) && (
+        <div class="sec__statement">
+          {taxonomy.statement.heading && <h2>{taxonomy.statement.heading}</h2>}
+          {taxonomy.statement.body && <p>{taxonomy.statement.body}</p>}
+        </div>
+      )
+    }
+
+    {
       articles.length === 0 ? (
         <p class="sec__empty">No articles here yet.</p>
       ) : (
@@ -78,6 +87,26 @@ const [lead, ...rest] = articles
     font-family: var(--font-ui);
     font-size: var(--step--1);
     margin: var(--space-2) 0 0;
+  }
+  .sec__statement {
+    max-width: var(--measure);
+    margin-bottom: var(--space-4);
+  }
+  .sec__statement h2 {
+    font-family: var(--font-ui);
+    font-size: var(--step-0);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+  }
+  .sec__statement p {
+    font-family: var(--font-serif);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0;
   }
   .sec__lead {
     padding-bottom: var(--space-4);

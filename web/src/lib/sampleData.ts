@@ -8,7 +8,13 @@ import type {Article, Author, PortableBlock, Taxonomy} from './types'
 const img = (src: string, alt: string, credit = 'Sample photo') => ({src, alt, credit})
 
 export const sampleRegions: Taxonomy[] = [
-  {_id: 'r-africa', _type: 'region', name: 'Africa', slug: 'africa', order: 10, mapId: 'africa', description: 'Politics, economics, and society across the African continent.'},
+  {
+    _id: 'r-africa', _type: 'region', name: 'Africa', slug: 'africa', order: 10, mapId: 'africa',
+    statement: {
+      heading: 'Decolonizing Journalism',
+      body: 'The Caravel’s Africa staff reports breaking news across the continent, cross-referencing and synthesizing information from local and international sources to bring readers unbiased and nuanced information about the region.',
+    },
+  },
   {_id: 'r-eeca', _type: 'region', name: 'Eastern Europe & Central Asia', shortName: 'E. Europe & C. Asia', slug: 'eastern-europe-central-asia', order: 20, mapId: 'eeca', description: 'From the Baltics to the Caucasus to the steppe.'},
   {_id: 'r-iap', _type: 'region', name: 'Indo-Asia-Pacific', shortName: 'Indo-Pacific', slug: 'indo-asia-pacific', order: 30, mapId: 'iap', description: 'South Asia, East and Southeast Asia, and the Pacific.'},
   {_id: 'r-lac', _type: 'region', name: 'Latin America & The Caribbean', shortName: 'Latin America', slug: 'latin-america-caribbean', order: 40, mapId: 'lac', description: 'Mexico, Central and South America, and the Caribbean.'},

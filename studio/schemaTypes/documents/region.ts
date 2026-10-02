@@ -42,6 +42,17 @@ export default defineType({
       description: 'One or two sentences shown at the top of the region page.',
     },
     {
+      name: 'statement',
+      title: 'Editorial statement',
+      type: 'object',
+      description:
+        'Optional longer statement shown below the short description on the region page (e.g. an explanation of editorial approach/mission for this region).',
+      fields: [
+        {name: 'heading', title: 'Heading', type: 'string'},
+        {name: 'body', title: 'Body', type: 'text', rows: 8},
+      ],
+    },
+    {
       name: 'order',
       title: 'Nav order',
       type: 'number',

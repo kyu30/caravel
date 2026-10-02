@@ -73,7 +73,7 @@ async function getAllPublishedArticles(): Promise<ArticleCardData[]> {
 export async function getRegions(): Promise<Taxonomy[]> {
   if (USE_SAMPLE_DATA) return [...sampleRegions].sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
   return q<Taxonomy[]>(
-    /* groq */ `*[_type == "region"]|order(order asc){_id, _type, name, shortName, "slug": slug.current, description, order, mapId}`,
+    /* groq */ `*[_type == "region"]|order(order asc){_id, _type, name, shortName, "slug": slug.current, description, statement, order, mapId}`,
   )
 }
 
@@ -85,7 +85,7 @@ export async function getSections(kind?: 'editorial' | 'compass'): Promise<Taxon
   }
   const filter = kind ? ` && kind == $kind` : ''
   return q<Taxonomy[]>(
-    /* groq */ `*[_type == "section"${filter}]|order(order asc){_id, _type, name, "slug": slug.current, description, order, kind}`,
+    /* groq */ `*[_type == "section"${filter}]|order(order asc){_id, _type, name, "slug": slug.current, description, statement, order, kind}`,
     kind ? {kind} : {},
   )
 }

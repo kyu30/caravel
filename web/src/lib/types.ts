@@ -40,6 +40,8 @@ export interface Taxonomy {
   slug: string
   shortName?: string
   description?: string
+  /** Optional longer editorial statement shown below the description. */
+  statement?: {heading?: string; body?: string}
   order?: number
   /** sections only */
   kind?: 'editorial' | 'compass'
