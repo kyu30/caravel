@@ -34,6 +34,43 @@ function dedupe(arr) {
   return [...new Set(arr.filter(Boolean))]
 }
 
+// Squarespace's `wp:post_name` is a raw permalink fragment, not a clean
+// slug -- 2,827 of 2,930 in-scope posts carry a leading `YYYY/M/D/` date
+// path (some malformed: bare dates, date+text with no separator, opaque
+// hashes). Deriving the slug from the title instead matches how every
+// hand-authored article on the site already gets its slug
+// (studio/schemaTypes/documents/article.ts: `options: {source: 'title'}`).
+function slugifyTitle(title) {
+  return title
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '') // strip diacritics: "Espírito" -> "Espirito"
+    .replace(/['’‘"“”]/g, '') // drop quotes/apostrophes outright (no hyphen) -- matches
+    // the site's existing convention, e.g. "Crow's Nest" -> "crows-nest"
+    // (studio/seed/taxonomy.ndjson), not "crow-s-nest"
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 96)
+    .replace(/-+$/g, '')
+}
+
+/** Slugs only need to be unique *within* a primarySection (matches the
+ * site's own article-by-slug query) -- append -2, -3, ... on collision. */
+function makeSlugAllocator(takenSlugsBySection) {
+  return function allocate(base, primaryId) {
+    if (!takenSlugsBySection.has(primaryId)) takenSlugsBySection.set(primaryId, new Set())
+    const taken = takenSlugsBySection.get(primaryId)
+    let slug = base || 'untitled'
+    let n = 2
+    while (taken.has(slug)) {
+      slug = `${base || 'untitled'}-${n}`
+      n += 1
+    }
+    taken.add(slug)
+    return slug
+  }
+}
+
 async function main() {
   mkdirSync(OUT_DIR, {recursive: true})
 
@@ -63,6 +100,8 @@ async function main() {
   )
 
   const authorResolver = buildAuthorResolver({liveAuthors: ctx.authors, wpAuthorsByLogin})
+  const allocateSlug = makeSlugAllocator(ctx.takenSlugsBySection)
+  const slugCollisions = []
   const attachmentUrlByPostId = new Map(
     items.filter((it) => it.postType === 'attachment').map((it) => [it.postId, it.attachmentUrl]),
   )
@@ -120,11 +159,15 @@ async function main() {
 
     const tags = dedupe([...it.tags.map((t) => t.display), ...tax.auditTags, ...tax.badgeTags])
 
+    const baseSlug = slugifyTitle(it.title)
+    const finalSlug = allocateSlug(baseSlug, tax.primaryId)
+    if (finalSlug !== baseSlug) slugCollisions.push({postId: it.postId, title: it.title, baseSlug, finalSlug})
+
     articleDocs.push({
       _id: `article.wp-${it.postId}`,
       _type: 'article',
       title: it.title,
-      slug: {_type: 'slug', current: it.slug},
+      slug: {_type: 'slug', current: finalSlug},
       status: 'draft',
       publishDate: toIso(it.postDateGmt, it.postDate),
       featured: false,
@@ -165,6 +208,7 @@ async function main() {
     path.join(OUT_DIR, 'author-collisions.json'),
     JSON.stringify(authorResolver.collisions, null, 2),
   )
+  writeFileSync(path.join(OUT_DIR, 'article-slug-collisions.json'), JSON.stringify(slugCollisions, null, 2))
 
   const blockingReview = manualReview.filter((r) => r.blocking)
   const alreadyLive = articleDocs.filter((d) => d._meta.alreadyLive).length
@@ -184,6 +228,7 @@ async function main() {
     newAuthors: authorResolver.newAuthors.length,
     reusedExistingAuthors: usedAuthorIds.size - authorResolver.newAuthors.length,
     authorSlugCollisions: authorResolver.collisions.length,
+    articleSlugCollisions: slugCollisions.length,
     heroImageUrlsFound: heroImageRows.length,
     conversionDropsTotal: conversionDrops.length,
     conversionDropsByTag: dropHistogram,

@@ -20,8 +20,22 @@ const DROPPED = new Set([
 ])
 const SAFE_HREF = /^(https?:|mailto:|tel:|\/)/i
 
+// WordPress/Squarespace "shortcodes" -- bracket syntax like
+// [caption ...]Some caption text[/caption], never real HTML, so cheerio just
+// sees plain text and passes it straight through. These always wrap an
+// image (or embed/video) we're already dropping this pass, so the whole
+// shortcode -- caption text included -- is stripped before parsing.
+const SHORTCODE_RE = /\[(caption|embed|video|gallery|audio)\b[^\]]*\][\s\S]*?\[\/\1\]/gi
+
 export function makeKey() {
   return randomUUID().replace(/-/g, '').slice(0, 12)
+}
+
+function stripShortcodes(html, {postId, onDrop} = {}) {
+  return html.replace(SHORTCODE_RE, (match, name) => {
+    onDrop?.({postId, tag: `shortcode:${name}`, snippet: match.slice(0, 80)})
+    return ''
+  })
 }
 
 /**
@@ -31,7 +45,7 @@ export function makeKey() {
  */
 export function htmlToPortableText(html, opts = {}) {
   const {postId = '', onDrop} = opts
-  const $ = cheerio.load(html ?? '')
+  const $ = cheerio.load(stripShortcodes(html ?? '', {postId, onDrop}))
   const blocks = []
   let current = null
 
