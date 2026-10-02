@@ -177,7 +177,7 @@ const fullDate = new Date(article.publishDate).toLocaleDateString('en-US', {
 
   /* --- headline block: left-aligned, news style --------------------- */
   .article__head {
-    max-width: 48rem; /* matches .article__hero below it */
+    max-width: var(--measure);
     padding-bottom: var(--space-3);
   }
   .article__kicker {
