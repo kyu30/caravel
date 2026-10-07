@@ -16,9 +16,9 @@ export async function GET(context: APIContext) {
       pubDate: new Date(a.publishDate),
       categories: [
         a.primarySection?.name,
-        ...(a.compassTopics ?? []).map((c) => c.name),
+        ...(a.compassTopics ?? []).filter(Boolean).map((c) => c.name),
       ].filter(Boolean) as string[],
-      author: a.authors.map((au) => au.name).join(', '),
+      author: (a.authors ?? []).filter(Boolean).map((au) => au.name).join(', '),
     })),
   })
 }

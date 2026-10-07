@@ -199,8 +199,8 @@ export async function getRelatedArticles(article: ArticleCardData, limit = 4): P
   }
   const tagIds = [
     article.primarySection._id,
-    ...(article.regions ?? []).map((r) => r._id),
-    ...(article.compassTopics ?? []).map((c) => c._id),
+    ...(article.regions ?? []).filter(Boolean).map((r) => r._id),
+    ...(article.compassTopics ?? []).filter(Boolean).map((c) => c._id),
   ]
   return q<ArticleCardData[]>(
     /* groq */ `*[${PUBLISHED} && _id != $id && (
@@ -278,6 +278,6 @@ export async function getSearchIndex(): Promise<SearchRecord[]> {
     excerpt: a.excerpt ?? a.subtitle ?? '',
     section: a.primarySection?.name ?? '',
     date: a.publishDate,
-    authors: a.authors.map((au) => au.name),
+    authors: (a.authors ?? []).filter(Boolean).map((au) => au.name),
   }))
 }
