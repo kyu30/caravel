@@ -24,7 +24,6 @@ import path from 'node:path'
 import {makeClient} from './lib/sanity-context.mjs'
 
 const DRIVE_ROOT = '/Users/keith/Downloads/drive-download-20261022T201737Z-1-001'
-const PUBLISHED_DIR_NAME = '4. Published'
 
 const args = process.argv.slice(2)
 const DRY_RUN = args.includes('--dry-run')
@@ -42,23 +41,38 @@ function normalize(title) {
     .trim()
 }
 
-function findDocxUnderPublished(root) {
+// Regions don't all use a single flat "4. Published" folder -- some (LAC,
+// WEUC, SWANA) also have a separate top-level "Archive"-style folder with
+// finished articles moved out of the active Published folder over time,
+// and LAC's archive even has its OWN nested Drafts/Ready/Copy-Edited/
+// Published pipeline inside it. Rather than special-case every region's
+// layout, walk the whole region tree and skip only folders that are
+// clearly a non-final stage (drafts, ready-for-copy, copy-edited,
+// resources, meeting notes, print layouts) -- recurse into everything
+// else, including arbitrarily nested "Archive"/"Published" folders.
+const SKIP_DIR_RE = /^1\.?\s*drafts?\b|^2\.?\s*ready for copy\b|^3\.?\s*copy edited\b|resources\b|meeting\b|print\b|\(delete\)/i
+
+function findArticleDocx(root) {
   const results = []
   for (const region of readdirSync(root)) {
-    const publishedDir = path.join(root, region, PUBLISHED_DIR_NAME)
+    const regionDir = path.join(root, region)
     try {
-      if (!statSync(publishedDir).isDirectory()) continue
+      if (!statSync(regionDir).isDirectory()) continue
     } catch {
       continue
     }
     const walk = (dir) => {
       for (const entry of readdirSync(dir, {withFileTypes: true})) {
         const full = path.join(dir, entry.name)
-        if (entry.isDirectory()) walk(full)
-        else if (entry.isFile() && /\.docx$/i.test(entry.name)) results.push(full)
+        if (entry.isDirectory()) {
+          if (SKIP_DIR_RE.test(entry.name)) continue
+          walk(full)
+        } else if (entry.isFile() && /\.docx$/i.test(entry.name)) {
+          results.push(full)
+        }
       }
     }
-    walk(publishedDir)
+    walk(regionDir)
   }
   return results
 }
@@ -184,8 +198,8 @@ function titleSimilarity(a, b) {
 }
 
 async function main() {
-  console.log('Scanning Published folders...')
-  let docs = findDocxUnderPublished(DRIVE_ROOT)
+  console.log('Scanning article folders...')
+  let docs = findArticleDocx(DRIVE_ROOT)
   console.log(`${docs.length} .docx file(s) found`)
   if (LIMIT) docs = docs.slice(0, LIMIT)
 
