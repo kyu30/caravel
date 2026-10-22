@@ -23,7 +23,10 @@ import {readdirSync, statSync} from 'node:fs'
 import path from 'node:path'
 import {makeClient} from './lib/sanity-context.mjs'
 
-const DRIVE_ROOT = '/Users/keith/Downloads/drive-download-20261022T201737Z-1-001'
+const DRIVE_ROOTS = [
+  '/Users/keith/Downloads/drive-download-20261022T201737Z-1-001', // regions
+  '/Users/keith/Downloads/drive-download-20261022T211229Z-1-001', // Compass topics
+]
 
 const args = process.argv.slice(2)
 const DRY_RUN = args.includes('--dry-run')
@@ -52,8 +55,9 @@ function normalize(title) {
 // else, including arbitrarily nested "Archive"/"Published" folders.
 const SKIP_DIR_RE = /^1\.?\s*drafts?\b|^2\.?\s*ready for copy\b|^3\.?\s*copy edited\b|resources\b|meeting\b|print\b|\(delete\)/i
 
-function findArticleDocx(root) {
+function findArticleDocx(roots) {
   const results = []
+  for (const root of roots) {
   for (const region of readdirSync(root)) {
     const regionDir = path.join(root, region)
     try {
@@ -74,7 +78,19 @@ function findArticleDocx(root) {
     }
     walk(regionDir)
   }
+  }
   return results
+}
+
+// Compass-topic docs' published titles get a "Compass World: "/"Compass
+// Money: " prefix added during editing that the original doc title never
+// had -- not random drift, a systematic rename. Derive the topic from the
+// doc's own folder path (World/Elections/Gender/Coin/Futures/Planet) so the
+// prefix can be tried as a second exact-match candidate.
+const COMPASS_TOPICS = ['World', 'Elections', 'Gender', 'Coin', 'Futures', 'Planet']
+function compassTopicFromPath(docPath) {
+  const parts = docPath.split(path.sep)
+  return COMPASS_TOPICS.find((t) => parts.includes(t)) ?? null
 }
 
 function toMarkdown(docxPath) {
@@ -199,7 +215,7 @@ function titleSimilarity(a, b) {
 
 async function main() {
   console.log('Scanning article folders...')
-  let docs = findArticleDocx(DRIVE_ROOT)
+  let docs = findArticleDocx(DRIVE_ROOTS)
   console.log(`${docs.length} .docx file(s) found`)
   if (LIMIT) docs = docs.slice(0, LIMIT)
 
@@ -237,7 +253,11 @@ async function main() {
       titleFailed++
       continue
     }
-    const matches = byNormTitle.get(normalize(title))
+    let matches = byNormTitle.get(normalize(title))
+    if (!matches || matches.length === 0) {
+      const topic = compassTopicFromPath(docPath)
+      if (topic) matches = byNormTitle.get(normalize(`Compass ${topic}: ${title}`))
+    }
     if (!matches || matches.length === 0) {
       noArticleMatch++
       unmatched.push({docPath, title, md})
