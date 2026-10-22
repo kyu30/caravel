@@ -17,8 +17,10 @@ export const sanityClient: SanityClient | null = USE_SAMPLE_DATA
       projectId,
       dataset,
       apiVersion: '2024-10-01',
-      // Static build: CDN is fine and cheaper. Flip to false if you wire ISR later.
-      useCdn: true,
+      // CDN (apicdn.sanity.io) quota got exhausted by an earlier rebuild
+      // storm and didn't recover -- direct API reads aren't subject to that
+      // same quota, so builds use those instead until it resets.
+      useCdn: false,
       perspective: 'published',
       token,
     })
