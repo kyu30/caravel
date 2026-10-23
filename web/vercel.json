@@ -3,6 +3,10 @@
   "framework": "astro",
   "buildCommand": "astro build",
   "outputDirectory": "dist",
+  "redirects": [
+    {"source": "/our-staff", "destination": "/staff", "permanent": true},
+    {"source": "/our-history", "destination": "/about", "permanent": true}
+  ],
   "headers": [
     {
       "source": "/(.*)",
