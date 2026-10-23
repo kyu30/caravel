@@ -5,7 +5,11 @@
   "outputDirectory": "dist",
   "redirects": [
     {"source": "/our-staff", "destination": "/staff", "permanent": true},
-    {"source": "/our-history", "destination": "/about", "permanent": true}
+    {"source": "/our-history", "destination": "/about", "permanent": true},
+    {"source": "/opinion", "destination": "/opinion-satire", "permanent": true},
+    {"source": "/blog", "destination": "/latest", "permanent": true},
+    {"source": "/join", "destination": "/contact", "permanent": true},
+    {"source": "/compass-world", "destination": "/world", "permanent": true}
   ],
   "headers": [
     {
