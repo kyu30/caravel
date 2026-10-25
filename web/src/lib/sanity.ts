@@ -17,10 +17,10 @@ export const sanityClient: SanityClient | null = USE_SAMPLE_DATA
       projectId,
       dataset,
       apiVersion: '2024-10-01',
-      // CDN (apicdn.sanity.io) quota got exhausted by an earlier rebuild
-      // storm and didn't recover -- direct API reads aren't subject to that
-      // same quota, so builds use those instead until it resets.
-      useCdn: false,
+      // Plan upgraded to cover the CDN quota that an earlier rebuild storm
+      // exhausted. CDN reads are much faster for a full-archive build (the
+      // direct API was taking 40+ min and risking the 45-min build ceiling).
+      useCdn: true,
       perspective: 'published',
       token,
     })
