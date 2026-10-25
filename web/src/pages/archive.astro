@@ -28,34 +28,79 @@ const years = [...groups.entries()].sort((a, b) => Number(b[0]) - Number(a[0]))
     years.length === 0 ? (
       <p>Nothing published yet.</p>
     ) : (
-      years.map(([year, list]) => (
-        <section class="archive__year">
-          <h2 class="archive__heading">
-            <span>{year}</span>
-            <span class="archive__count">
-              {list.length} article{list.length === 1 ? '' : 's'}
-            </span>
-          </h2>
-          <ul class="archive__list">
-            {list.map((a) => (
-              <li>
-                <ArticleCard
-                  article={a}
-                  variant="row"
-                  showImage={false}
-                  showExcerpt={false}
-                  headingLevel={3}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))
+      <>
+        <div class="archive__toolbar">
+          <button id="archive-sort" type="button" aria-pressed="false">
+            Sort: Newest first
+          </button>
+        </div>
+        <div id="archive-years">
+          {years.map(([year, list]) => (
+            <section class="archive__year" data-year={year}>
+              <h2 class="archive__heading">
+                <span>{year}</span>
+                <span class="archive__count">
+                  {list.length} article{list.length === 1 ? '' : 's'}
+                </span>
+              </h2>
+              <ul class="archive__list">
+                {list.map((a) => (
+                  <li>
+                    <ArticleCard
+                      article={a}
+                      variant="row"
+                      showImage={false}
+                      showExcerpt={false}
+                      headingLevel={3}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </>
     )
   }
 </PageLayout>
 
+<script>
+  const button = document.getElementById('archive-sort') as HTMLButtonElement | null
+  const container = document.getElementById('archive-years')
+  if (button && container) {
+    let newestFirst = true
+    button.addEventListener('click', () => {
+      const sections = [...container.children]
+      sections.reverse().forEach((s) => container.appendChild(s))
+      newestFirst = !newestFirst
+      button.textContent = `Sort: ${newestFirst ? 'Newest' : 'Oldest'} first`
+      button.setAttribute('aria-pressed', String(!newestFirst))
+    })
+  }
+</script>
+
 <style>
+  .archive__toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-3);
+  }
+  .archive__toolbar button {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: var(--step--1);
+    padding: 0.6rem 1.1rem;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--rule-strong);
+    cursor: pointer;
+  }
+  .archive__toolbar button:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
   .archive__year {
     margin-bottom: var(--space-5);
   }
