@@ -16,7 +16,6 @@ const {title, intro, description, kicker, wide = false} = Astro.props
     <header class="page__head">
       {kicker && <p class="kicker">{kicker}</p>}
       <h1 class="page__title">{title}</h1>
-      {intro && <p class="page__intro">{intro}</p>}
     </header>
     <div class:list={['page__content', {'page__content--prose': !wide}]}>
       <slot />
@@ -36,13 +35,6 @@ const {title, intro, description, kicker, wide = false} = Astro.props
   .page__title {
     font-size: var(--step-4);
     margin: 0.2rem 0 0;
-  }
-  .page__intro {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
-    color: var(--ink-soft);
-    max-width: 60ch;
-    margin: var(--space-2) 0 0;
   }
   .page__content--prose {
     max-width: var(--measure);

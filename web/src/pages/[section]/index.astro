@@ -38,7 +38,6 @@ const statementParagraphs = (taxonomy.statement?.body ?? '')
     <header class="sec__head">
       <p class="kicker">{kicker}</p>
       <h1 class="sec__title">{taxonomy.name}</h1>
-      {taxonomy.description && <p class="sec__desc">{taxonomy.description}</p>}
       {isRegion && <p class="sec__aside"><a href="/regions">← All regions &amp; map</a></p>}
       {isCompass && <p class="sec__aside"><a href="/compass">← About Compass</a></p>}
     </header>
@@ -83,12 +82,6 @@ const statementParagraphs = (taxonomy.statement?.body ?? '')
   .sec__title {
     font-size: var(--step-4);
     margin: 0.2rem 0 0;
-  }
-  .sec__desc {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
-    color: var(--ink-soft);
-    margin: var(--space-2) 0 0;
   }
   .sec__aside {
     font-family: var(--font-ui);
