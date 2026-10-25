@@ -18,11 +18,12 @@ export const ABOUT_LINKS: NavLink[] = [
 ]
 
 /**
- * Primary navigation: Latest / Archive (top-level) + About / Regions / Compass
- * dropdowns. Built from Sanity taxonomy so new regions/Compass verticals
- * appear automatically. The editorial sections (Opinion & Satire, Travel) sit
- * outside the nav entirely — reachable from the homepage — except Crow's Nest,
- * which is folded into the Regions dropdown alongside the six regions.
+ * Primary navigation: Latest (top-level) + Regions / Compass / About
+ * dropdowns + Archive (top-level). Built from Sanity taxonomy so new
+ * regions/Compass verticals appear automatically. The editorial sections
+ * (Opinion & Satire, Travel) sit outside the nav entirely — reachable from
+ * the homepage — except Crow's Nest, which is folded into the Regions
+ * dropdown alongside the six regions.
  */
 export async function getNav(): Promise<NavGroup[]> {
   const [regions, editorial, compass] = await Promise.all([
@@ -37,7 +38,6 @@ export async function getNav(): Promise<NavGroup[]> {
   const mapRegions = regions.filter((r) => r.mapId)
 
   return [
-    {label: 'About', href: '/about', children: ABOUT_LINKS},
     {
       label: 'Regions',
       href: '/regions',
@@ -51,5 +51,6 @@ export async function getNav(): Promise<NavGroup[]> {
       href: '/compass',
       children: compass.map((s) => ({label: s.name, href: `/${s.slug}`})),
     },
+    {label: 'About', href: '/about', children: ABOUT_LINKS},
   ]
 }
