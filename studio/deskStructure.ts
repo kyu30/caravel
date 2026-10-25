@@ -11,7 +11,7 @@ import {
  * Custom Studio sidebar. The editorial intake queue is pulled to the top and
  * split by status so editors can work "Pending" like a to-do list.
  */
-export const deskStructure: StructureResolver = (S) =>
+export const deskStructure: StructureResolver = (S, context) =>
   S.list()
     .title('The Caravel')
     .items([
@@ -97,6 +97,31 @@ export const deskStructure: StructureResolver = (S) =>
                     .filter('_type == "article" && featured == true')
                     .defaultOrdering([{field: 'publishDate', direction: 'desc'}]),
                 ),
+              S.divider(),
+              S.listItem()
+                .title('By region')
+                .icon(EarthGlobeIcon)
+                .child(async () => {
+                  const client = context.getClient({apiVersion: '2024-10-01'})
+                  const regions: {_id: string; name: string}[] = await client.fetch(
+                    `*[_type == "region"] | order(order asc) {_id, name}`,
+                  )
+                  return S.list()
+                    .title('By region')
+                    .items(
+                      regions.map((r) =>
+                        S.listItem()
+                          .title(r.name)
+                          .child(
+                            S.documentList()
+                              .title(r.name)
+                              .filter('_type == "article" && primarySection._ref == $id')
+                              .params({id: r._id})
+                              .defaultOrdering([{field: 'publishDate', direction: 'desc'}]),
+                          ),
+                      ),
+                    )
+                }),
               S.divider(),
               S.listItem().title('All articles').child(S.documentTypeList('article').title('All articles')),
             ]),
