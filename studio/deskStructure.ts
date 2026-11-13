@@ -1,6 +1,7 @@
 import type {StructureResolver} from 'sanity/structure'
 import {
   DocumentTextIcon,
+  DocumentIcon,
   UserIcon,
   EarthGlobeIcon,
   TagIcon,
@@ -128,6 +129,15 @@ export const deskStructure: StructureResolver = (S, context) =>
         ),
 
       S.listItem().title('Authors & staff').icon(UserIcon).child(S.documentTypeList('author').title('Authors & staff')),
+
+      S.listItem()
+        .title('Print editions')
+        .icon(DocumentIcon)
+        .child(
+          S.documentTypeList('printEdition')
+            .title('Print editions')
+            .defaultOrdering([{field: 'issueDate', direction: 'desc'}]),
+        ),
 
       S.divider(),
 

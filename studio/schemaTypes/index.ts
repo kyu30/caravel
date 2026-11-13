@@ -1,5 +1,6 @@
 import article from './documents/article'
 import author from './documents/author'
+import printEdition from './documents/printEdition'
 import region from './documents/region'
 import section from './documents/section'
 import submission from './documents/submission'
@@ -11,6 +12,7 @@ export const schemaTypes = [
   // documents
   article,
   author,
+  printEdition,
   region,
   section,
   submission,

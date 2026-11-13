@@ -3,9 +3,26 @@
  * Shapes here match the *projected* types in types.ts (slugs are strings, each
  * article already has a resolved `url`), NOT the raw Sanity documents.
  */
-import type {Article, Author, PortableBlock, Taxonomy} from './types'
+import type {Article, Author, PortableBlock, PrintEdition, Taxonomy} from './types'
 
 const img = (src: string, alt: string, credit = 'Sample photo') => ({src, alt, credit})
+
+export const samplePrintEditions: PrintEdition[] = [
+  {
+    _id: 'pe-fall-2026',
+    title: 'Fall 2026',
+    issueDate: '2026-11-01',
+    coverImage: img('/images/avatar.svg', 'Fall 2026 cover'),
+    pdfUrl: 'https://example.com/sample-print-edition.pdf',
+  },
+  {
+    _id: 'pe-spring-2026',
+    title: 'Spring 2026',
+    issueDate: '2026-04-01',
+    coverImage: img('/images/avatar.svg', 'Spring 2026 cover'),
+    pdfUrl: 'https://example.com/sample-print-edition.pdf',
+  },
+]
 
 export const sampleRegions: Taxonomy[] = [
   {

@@ -33,6 +33,14 @@ export interface Author extends AuthorRef {
   active?: boolean
 }
 
+export interface PrintEdition {
+  _id: string
+  title: string
+  issueDate: string
+  coverImage: SanityImage
+  pdfUrl: string
+}
+
 export interface Taxonomy {
   _id: string
   _type: 'region' | 'section'

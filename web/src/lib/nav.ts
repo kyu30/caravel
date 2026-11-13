@@ -14,6 +14,7 @@ export const ABOUT_LINKS: NavLink[] = [
   {label: 'About / Our History', href: '/about'},
   {label: 'Masthead', href: '/masthead'},
   {label: 'Our Staff', href: '/staff'},
+  {label: 'Print Editions', href: '/print'},
   {label: 'Contact', href: '/contact'},
 ]
 

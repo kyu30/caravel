@@ -1,0 +1,81 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import {imageUrl} from '../lib/image'
+import {getPrintEditions} from '../lib/queries'
+
+const editions = await getPrintEditions()
+---
+
+<PageLayout
+  title="Print Editions"
+  kicker="Archive"
+  intro="Past print editions of The Caravel, available as PDFs."
+  wide
+>
+  {
+    editions.length === 0 ? (
+      <p>No print editions yet.</p>
+    ) : (
+      <ul class="print-grid">
+        {editions.map((e) => (
+          <li class="print-grid__item">
+            <a href={e.pdfUrl} target="_blank" rel="noopener" class="print-grid__cover">
+              <img src={imageUrl(e.coverImage, {width: 320})} alt={e.coverImage.alt ?? `${e.title} cover`} />
+            </a>
+            <p class="print-grid__title">
+              <a href={e.pdfUrl} target="_blank" rel="noopener">
+                {e.title}
+              </a>
+            </p>
+            <p class="print-grid__date">
+              {new Date(e.issueDate).toLocaleDateString('en-US', {year: 'numeric', month: 'long'})}
+            </p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</PageLayout>
+
+<style>
+  .print-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-4) var(--space-3);
+  }
+  .print-grid__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .print-grid__cover {
+    display: block;
+    border: 1px solid var(--rule-strong);
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+  }
+  .print-grid__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .print-grid__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-0);
+    margin: 0;
+  }
+  .print-grid__title a {
+    color: var(--ink);
+  }
+  .print-grid__date {
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink-faint);
+    margin: 0;
+  }
+</style>

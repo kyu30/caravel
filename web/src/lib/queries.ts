@@ -6,10 +6,11 @@
  * var is set the same functions run GROQ against the real dataset.
  */
 import {sanityClient, USE_SAMPLE_DATA} from './sanity'
-import type {Article, ArticleCardData, Author, Taxonomy} from './types'
+import type {Article, ArticleCardData, Author, PrintEdition, Taxonomy} from './types'
 import {
   sampleArticles,
   sampleAuthors,
+  samplePrintEditions,
   sampleRegions,
   sampleSections,
 } from './sampleData'
@@ -237,6 +238,17 @@ export async function getArticlesByTagSlug(tagSlug: string, limit = 60): Promise
 export async function getAuthors(): Promise<Author[]> {
   if (USE_SAMPLE_DATA) return [...sampleAuthors].sort((a, b) => a.name.localeCompare(b.name))
   return q<Author[]>(/* groq */ `*[_type == "author"]|order(name asc){${AUTHOR_FIELDS}}`)
+}
+
+const PRINT_EDITION_FIELDS = `_id, title, issueDate, coverImage, "pdfUrl": pdf.asset->url`
+
+export async function getPrintEditions(): Promise<PrintEdition[]> {
+  if (USE_SAMPLE_DATA) {
+    return [...samplePrintEditions].sort((a, b) => b.issueDate.localeCompare(a.issueDate))
+  }
+  return q<PrintEdition[]>(
+    /* groq */ `*[_type == "printEdition"]|order(issueDate desc){${PRINT_EDITION_FIELDS}}`,
+  )
 }
 
 export async function getAuthorBySlug(slug: string): Promise<Author | null> {
