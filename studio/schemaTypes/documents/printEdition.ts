@@ -24,10 +24,11 @@ export default defineType({
     {
       name: 'coverImage',
       title: 'Cover image',
+      description:
+        'Auto-generated from the PDF\'s first page after upload -- leave blank and run the cover-generation script. Only set this by hand to override the auto-generated cover.',
       type: 'image',
       options: {hotspot: true},
       fields: [{name: 'alt', type: 'string', title: 'Alt text'}],
-      validation: (rule) => rule.required(),
     },
     {
       name: 'pdf',

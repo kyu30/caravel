@@ -37,7 +37,8 @@ export interface PrintEdition {
   _id: string
   title: string
   issueDate: string
-  coverImage: SanityImage
+  /** Auto-generated from the PDF's first page; absent until that script runs. */
+  coverImage?: SanityImage
   pdfUrl: string
 }
 
