@@ -240,14 +240,14 @@ export async function getAuthors(): Promise<Author[]> {
   return q<Author[]>(/* groq */ `*[_type == "author"]|order(name asc){${AUTHOR_FIELDS}}`)
 }
 
-const PRINT_EDITION_FIELDS = `_id, title, issueDate, coverImage, "pdfUrl": pdf.asset->url`
+const PRINT_EDITION_FIELDS = `_id, title, issueMonth, coverImage, "pdfUrl": pdf.asset->url`
 
 export async function getPrintEditions(): Promise<PrintEdition[]> {
   if (USE_SAMPLE_DATA) {
-    return [...samplePrintEditions].sort((a, b) => b.issueDate.localeCompare(a.issueDate))
+    return [...samplePrintEditions].sort((a, b) => b.issueMonth.localeCompare(a.issueMonth))
   }
   return q<PrintEdition[]>(
-    /* groq */ `*[_type == "printEdition"]|order(issueDate desc){${PRINT_EDITION_FIELDS}}`,
+    /* groq */ `*[_type == "printEdition"]|order(issueMonth desc){${PRINT_EDITION_FIELDS}}`,
   )
 }
 

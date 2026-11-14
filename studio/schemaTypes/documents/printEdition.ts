@@ -15,11 +15,14 @@ export default defineType({
       validation: (rule) => rule.required(),
     },
     {
-      name: 'issueDate',
-      title: 'Issue date',
-      type: 'date',
-      description: 'Used to sort editions newest-first.',
-      validation: (rule) => rule.required(),
+      name: 'issueMonth',
+      title: 'Issue year-month',
+      type: 'string',
+      description: 'Format: YYYY-MM, e.g. 2026-11. Used to sort editions newest-first.',
+      validation: (rule) =>
+        rule
+          .required()
+          .regex(/^\d{4}-(0[1-9]|1[0-2])$/, {name: 'YYYY-MM', invert: false}),
     },
     {
       name: 'coverImage',
@@ -39,9 +42,9 @@ export default defineType({
     },
   ],
   orderings: [
-    {title: 'Issue date, newest first', name: 'issueDateDesc', by: [{field: 'issueDate', direction: 'desc'}]},
+    {title: 'Issue month, newest first', name: 'issueMonthDesc', by: [{field: 'issueMonth', direction: 'desc'}]},
   ],
   preview: {
-    select: {title: 'title', subtitle: 'issueDate', media: 'coverImage'},
+    select: {title: 'title', subtitle: 'issueMonth', media: 'coverImage'},
   },
 })

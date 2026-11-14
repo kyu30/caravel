@@ -36,7 +36,7 @@ export interface Author extends AuthorRef {
 export interface PrintEdition {
   _id: string
   title: string
-  issueDate: string
+  issueMonth: string
   /** Auto-generated from the PDF's first page; absent until that script runs. */
   coverImage?: SanityImage
   pdfUrl: string

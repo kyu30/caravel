@@ -11,14 +11,14 @@ export const samplePrintEditions: PrintEdition[] = [
   {
     _id: 'pe-fall-2026',
     title: 'Fall 2026',
-    issueDate: '2026-11-01',
+    issueMonth: '2026-11',
     coverImage: img('/images/avatar.svg', 'Fall 2026 cover'),
     pdfUrl: 'https://example.com/sample-print-edition.pdf',
   },
   {
     _id: 'pe-spring-2026',
     title: 'Spring 2026',
-    issueDate: '2026-04-01',
+    issueMonth: '2026-04',
     coverImage: img('/images/avatar.svg', 'Spring 2026 cover'),
     pdfUrl: 'https://example.com/sample-print-edition.pdf',
   },

@@ -136,7 +136,7 @@ export const deskStructure: StructureResolver = (S, context) =>
         .child(
           S.documentTypeList('printEdition')
             .title('Print editions')
-            .defaultOrdering([{field: 'issueDate', direction: 'desc'}]),
+            .defaultOrdering([{field: 'issueMonth', direction: 'desc'}]),
         ),
 
       S.divider(),

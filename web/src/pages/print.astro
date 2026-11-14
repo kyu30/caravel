@@ -4,6 +4,17 @@ import {imageUrl} from '../lib/image'
 import {getPrintEditions} from '../lib/queries'
 
 const editions = await getPrintEditions()
+
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+]
+// issueMonth is "YYYY-MM" -- parsed by hand rather than `new Date()` to avoid
+// any timezone shifting a month-only value into the wrong month/year.
+function formatIssueMonth(issueMonth: string) {
+  const [year, month] = issueMonth.split('-').map(Number)
+  return `${MONTH_NAMES[month - 1]} ${year}`
+}
 ---
 
 <PageLayout
@@ -31,9 +42,7 @@ const editions = await getPrintEditions()
                 {e.title}
               </a>
             </p>
-            <p class="print-grid__date">
-              {new Date(e.issueDate).toLocaleDateString('en-US', {year: 'numeric', month: 'long'})}
-            </p>
+            <p class="print-grid__date">{formatIssueMonth(e.issueMonth)}</p>
           </li>
         ))}
       </ul>
